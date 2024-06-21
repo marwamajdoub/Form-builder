@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # formbuilder
 
 ## Project setup
@@ -23,7 +23,3 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-=======
-# Form-builder
->>>>>>> 244e764e0d49d80d1ba9d54cfeb3806f440d5115
-# internship_Project
