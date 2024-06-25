@@ -46,7 +46,28 @@
               :key="index"
               :class="getFieldClass(field.type)"
             >
-              <component :is="field.type" v-bind="field.props"></component>
+              <input
+                type="text"
+                v-model="field.question"
+                placeholder="Entrez la question"
+              />
+              <label :for="'field-' + index">{{ field.label }}</label>
+              <component
+                :is="field.type"
+                v-bind="field.props"
+                :id="'field-' + index"
+              ></component>
+
+              <!-- Handling options for specific field types -->
+              <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'">
+                <label>Options:</label>
+                <div v-for="(option, optIndex) in field.props.options" :key="optIndex">
+                  <input type="text" v-model="field.props.options[optIndex]" placeholder="Option">
+                  <button @click.prevent="removeOption(field, optIndex)">Supprimer</button>
+                </div>
+                <button @click.prevent="addOption(field)">Ajouter une option</button>
+              </div>
+
               <button @click.prevent="editElement(index)">Éditer</button>
               <button @click.prevent="duplicateElement(index)">Dupliquer</button>
               <button @click.prevent="deleteElement(index)">Supprimer</button>
@@ -63,7 +84,8 @@
         <div class="form-preview">
           <form>
             <div v-for="(field, index) in formFields" :key="index">
-              <component :is="field.type" v-bind="field.props"></component>
+              <label :for="'field-' + index">{{ field.question }}</label>
+              <component :is="field.type" v-bind="field.props" :id="'field-' + index"></component>
             </div>
           </form>
         </div>
@@ -101,8 +123,8 @@ export default {
       previewMode: false,
       selectedElement: null,
       formElements: [
-        { type: 'text-input', label: 'Champ texte court' },
-        { type: 'paragraph-input', label: 'Champ paragraphe' },
+        { type: 'text-input', label: 'Réponse courte' },
+        { type: 'paragraph-input', label: 'Paragraphe' },
         { type: 'checkbox-group', label: 'Cases à cocher' },
         { type: 'radio-group', label: 'Boutons radio' },
         { type: 'dropdown', label: 'Menu déroulant' },
@@ -117,7 +139,18 @@ export default {
   methods: {
     // Handle click event to add element to form
     addElementToForm(element) {
-      this.formFields.push({ type: element.type, props: {} });
+      const newElement = {
+        type: element.type,
+        label: element.label,
+        question: '', // Initialize question for the element
+        props: {
+          placeholder: `Entrez ${element.label.toLowerCase()}`
+        }
+      };
+      if (element.type === 'checkbox-group' || element.type === 'radio-group' || element.type === 'dropdown') {
+        newElement.props.options = ['']; // Initialize options array if needed
+      }
+      this.formFields.push(newElement);
     },
     // Edit selected element
     editElement(index) {
@@ -169,6 +202,18 @@ export default {
     deleteForm(index) {
       this.savedForms.splice(index, 1);
     },
+    // Add an option to the field
+    addOption(field) {
+      if (!field.props.options) {
+        this.$set(field.props, 'options', ['']);
+      } else {
+        field.props.options.push('');
+      }
+    },
+    // Remove an option from the field
+    removeOption(field, index) {
+      field.props.options.splice(index, 1);
+    },
     // Get CSS class based on field type
     getFieldClass(type) {
       return `form-field-${type}`;
@@ -176,15 +221,69 @@ export default {
   }
 };
 </script>
+
+
 <style scoped>
 .form-builder {
   display: flex;
 }
 
 .sidebar {
-  width: 200px;
+  width: 240px; /* Légèrement augmenté pour plus d'espace */
   background-color: #f0f0f0;
   padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre légère */
+}
+
+.sidebar .element {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Légère ombre sous chaque élément */
+}
+
+.sidebar .element:hover {
+  background-color: #e0e0e0; /* Légère modification de couleur au survol */
+}
+
+.sidebar .element:last-child {
+  margin-bottom: 0; /* Supprime le margin-bottom du dernier élément */
+}
+.form-header {
+  margin-bottom: 30px; /* Augmentation de l'espacement en bas pour plus d'aération */
+  border-bottom: 1px solid #ccc; /* Ajout d'une ligne de séparation en bas */
+  padding-bottom: 15px; /* Espacement en bas pour la séparation */
+}
+
+.form-title, .form-description {
+  margin-bottom: 15px; /* Espacement entre les titres et les champs */
+}
+
+.form-title label, .form-description label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px; /* Espacement entre les labels et les champs */
+}
+
+.form-title input[type="text"],
+.form-description textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease; /* Transition pour un changement en douceur */
+}
+
+.form-title input[type="text"]:focus,
+.form-description textarea:focus {
+  border-color: #007bff; /* Couleur de bordure au focus */
+  outline: none; /* Suppression de l'outline par défaut */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Légère ombre au focus */
 }
 
 .form-container {
@@ -196,21 +295,13 @@ export default {
   margin-top: 20px;
 }
 
-.form-header {
-  margin-bottom: 20px;
-}
+
 
 .form-area {
   padding: 20px;
   border: 1px solid #ccc;
 }
 
-.element {
-  background-color: #fff;
-  padding: 10px;
-  margin-bottom: 5px;
-  cursor: pointer;
-}
 
 .label {
   display: block;
@@ -289,4 +380,3 @@ input[type="file"] {
   margin-bottom: 10px;
 }
 </style>
-

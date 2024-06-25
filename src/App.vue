@@ -4,13 +4,13 @@
       <h1>FORM</h1>
     </header>
     <main>
-      
+     
       <FormBuilder />
+      
     </main>
     
   </div>
 </template>
-
 <script>
 import FormBuilder from './components/FormBuilder.vue';
 
@@ -21,6 +21,7 @@ export default {
   }
 };
 </script>
+
 
 <style>
 body {
