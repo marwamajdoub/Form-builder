@@ -59,12 +59,12 @@
                 v-bind="field.props"
                 :id="'field-' + index"
               ></component>
+              <div :id="'editor-' + index" class="quill-editor"></div>
+
+              
             </div>
                 <!-- Palette d'édition de texte -->
-            <div>
-                  <label>Modifier la question :</label>
-                 <TextEditor v-model="field.question"></TextEditor>
-           </div>
+          
               <!-- Handling options for specific field types -->
               <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'" class="options-container">
                 <label class="options-label">Options:</label>
