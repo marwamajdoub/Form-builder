@@ -52,13 +52,19 @@
                 v-model="field.question"
                 placeholder="Entrez la question"
               />
+            <div>
               <label :for="'field-' + index">{{ field.label }}</label>
               <component
                 :is="field.type"
                 v-bind="field.props"
                 :id="'field-' + index"
               ></component>
-
+            </div>
+                <!-- Palette d'édition de texte -->
+            <div>
+                  <label>Modifier la question :</label>
+                 <TextEditor v-model="field.question"></TextEditor>
+           </div>
               <!-- Handling options for specific field types -->
               <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'" class="options-container">
                 <label class="options-label">Options:</label>
