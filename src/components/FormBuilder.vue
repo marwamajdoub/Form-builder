@@ -67,15 +67,25 @@
                 </div>
                 <button @click.prevent="addOption(field)">Ajouter une option</button>
               </div>
+              <button class="action-button" @click.prevent="editElement(index)">
+                 <i class="fas fa-edit"></i> <!-- Icône pour éditer -->
+              </button>
 
-              <button @click.prevent="editElement(index)">Éditer</button>
-              <button @click.prevent="duplicateElement(index)">Dupliquer</button>
-              <button @click.prevent="deleteElement(index)">Supprimer</button>
+              <button  class="action-button" @click.prevent="duplicateElement(index)">
+                <i class="fas fa-copy"></i> <!-- Icône pour dupliquer -->
+              </button>
+
+               <button  class="action-button" @click.prevent="deleteElement(index)">
+               <i class="fas fa-trash-alt"></i> <!-- Icône pour supprimer -->
+              </button>
+
             </div>
           </form>
         </div>
-        <button @click="togglePreviewMode">Prévisualiser</button>
-        <button @click="saveForm">Enregistrer le formulaire</button>
+        <div class="fo-butt">
+          <button class="form-button" @click="togglePreviewMode">Prévisualiser</button>
+          <button class="form-button" @click="saveForm">Enregistrer </button>
+        </div>
       </div>
 
       <!-- Preview mode -->
@@ -246,7 +256,7 @@ export default {
 }
 
 .sidebar .element:hover {
-  background-color: #e0e0e0; /* Légère modification de couleur au survol */
+  background-color :#007bff ; /* Légère modification de couleur au survol */
 }
 
 .sidebar .element:last-child {
@@ -258,49 +268,146 @@ export default {
   padding-bottom: 15px; /* Espacement en bas pour la séparation */
 }
 
-.form-title, .form-description {
-  margin-bottom: 15px; /* Espacement entre les titres et les champs */
+.form-title {
+  flex: 1; /* Pour occuper tout l'espace disponible */
 }
 
-.form-title label, .form-description label {
+.form-title label {
   display: block;
   font-weight: bold;
-  margin-bottom: 5px; /* Espacement entre les labels et les champs */
+  margin-bottom: 8px; /* Espacement entre le label et le champ */
+  color: #2e86c1; /* Bleu légèrement plus foncé */
+  font-size: 1.2em; /* Taille de police légèrement augmentée */
+  transition: color 0.3s ease; /* Transition de couleur douce */
 }
 
-.form-title input[type="text"],
-.form-description textarea {
+.form-title input[type="text"] {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: 1px solid #b8c9dc; /* Bordure légèrement plus claire */
   border-radius: 4px;
   box-sizing: border-box;
-  transition: border-color 0.3s ease; /* Transition pour un changement en douceur */
+  font-size: 1em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition douce */
 }
 
-.form-title input[type="text"]:focus,
+.form-title input[type="text"]:focus {
+  border-color: #3071a9; /* Bleu plus foncé au focus */
+  box-shadow: 0 0 8px rgba(48, 113, 169, 0.4); /* Légère ombre au focus */
+}
+
+/* Style pour la description du formulaire */
+.form-description {
+  flex: 2; /* Pour occuper un espace plus grand */
+}
+
+.form-description label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px; /* Espacement entre le label et le champ */
+  color: #2e86c1; /* Bleu légèrement plus foncé */
+  font-size: 1.2em; /* Taille de police légèrement augmentée */
+  transition: color 0.3s ease; /* Transition de couleur douce */
+}
+
+.form-description textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #b8c9dc; /* Bordure légèrement plus claire */
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1em;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition douce */
+}
+
 .form-description textarea:focus {
-  border-color: #007bff; /* Couleur de bordure au focus */
-  outline: none; /* Suppression de l'outline par défaut */
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Légère ombre au focus */
+  border-color: #3071a9; /* Bleu plus foncé au focus */
+  box-shadow: 0 0 8px rgba(48, 113, 169, 0.4); /* Légère ombre au focus */
 }
 
 .form-container {
   flex: 1;
   padding: 20px;
+  background-color: #f0f5f9; /* Couleur de fond */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre plus prononcée */
+  transition: box-shadow 0.3s ease; /* Transition pour une légère animation */
 }
 
-.preview-container {
-  margin-top: 20px;
+.form-container:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Légère augmentation de l'ombre au survol */
 }
-
 
 
 .form-area {
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 2px solid #1a5276; /* Bordure plus prononcée et bleu sombre */
+  border-radius: 8px;
+  background-color: #f0f5f9; /* Fond légèrement teinté */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre pour la profondeur */
+  transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Transition pour une animation douce */
 }
+
+.form-area:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre légèrement plus prononcée au survol */
+  border-color: #2e86c1; /* Couleur de bordure plus claire au survol */
+}
+
+
+/* Style pour les champs de formulaire */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #b8c9dc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+
+/* Style de base pour les boutons previsualiser et enrigistrer*/
+.fo-butt {
+  display: flex;
+  gap: 10px; /* Espacement entre les boutons */
+  justify-content: center; /* Centrer les boutons horizontalement */
+  margin-top: 20px; /* Marge supérieure */
+}
+
+/* Style de base pour les boutons */
+.form-button {
+  padding: 12px 24px; /* Padding pour une taille confortable */
+  background-color: #007bff; /* Bleu vif */
+  color: #ffffff; /* Texte blanc */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Style au survol */
+.form-button:hover {
+  background-color: #0056b3; /* Bleu légèrement plus foncé au survol */
+  transform: translateY(-2px); /* Légère élévation au survol */
+}
+.action-button {
+    background-color: transparent;
+    border: none;
+    color: #007bff; /* Couleur de texte bleue */
+    cursor: pointer;
+    font-size: 1em;
+    transition: color 0.3s ease;
+    margin-right: 10px; /* Marge entre les boutons */
+  }
+
+  .action-button:hover {
+    color: #0056b3; /* Couleur de texte bleue plus foncée au survol */
+  }
+
+  .action-button i {
+    margin-right: 5px; /* Espace entre l'icône et le texte */
+  }
+
 
 
 .label {
