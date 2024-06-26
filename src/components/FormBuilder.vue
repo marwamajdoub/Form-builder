@@ -60,8 +60,7 @@
                 :id="'field-' + index"
               ></component>
               <div :id="'editor-' + index" class="quill-editor"></div>
-
-              
+              <div :id="'editor-container-' + index"></div> 
             </div>
                 <!-- Palette d'édition de texte -->
           
@@ -151,6 +150,8 @@
   </div>
 </template>
 <script>
+import Quill from 'quill';
+
 export default {
   data() {
     return {
@@ -172,6 +173,9 @@ export default {
       formFields: [], // Array to store form fields
       savedForms: [] // Array to store saved forms
     };
+  },
+  mounted() {
+    this.initializeEditors();
   },
   methods: {
     // Handle click event to add element to form
@@ -254,7 +258,15 @@ export default {
     // Get CSS class based on field type
     getFieldClass(type) {
       return `form-field-${type}`;
+    },
+    initializeEditors() {
+      this.formFields.forEach((field, index) => {
+        new Quill('#editor-container-' + index, {
+          theme: 'snow' // Thème Quill snow pour une interface simple
+        });
+      });
     }
+  
   }
 };
 </script>

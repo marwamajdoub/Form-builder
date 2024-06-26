@@ -1,25 +1,22 @@
 <template>
   <div id="app">
     <header>
-      <h1><i  class="fas fa-file-alt"></i>FORM BUILDER</h1>
+      <h1><i class="fas fa-file-alt"></i>FORM BUILDER</h1>
+      <nav>
+        <router-link to="/form-builder">Form Builder</router-link>
+        <router-link to="/home">Home</router-link>
+      </nav>
     </header>
     <main>
       <router-view></router-view>
-      <div class="form-builder">
-        <FormBuilder />
-      </div>
     </main>
   </div>
 </template>
-
 <script>
-import FormBuilder from './components/FormBuilder.vue';
 
 export default {
-  name: 'App',
-  components: {
-    FormBuilder
-  }
+  name: 'App'
+  
 };
 </script>
 
