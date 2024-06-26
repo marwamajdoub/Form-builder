@@ -8,7 +8,8 @@
         :key="index"
         @click="addElementToForm(element)"
       >
-        {{ element.label }}
+       <i :class="element.icon"></i>
+       <span>{{ element.label }}</span>
       </div>
     </div>
 
@@ -59,14 +60,23 @@
               ></component>
 
               <!-- Handling options for specific field types -->
-              <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'">
-                <label>Options:</label>
-                <div v-for="(option, optIndex) in field.props.options" :key="optIndex">
-                  <input type="text" v-model="field.props.options[optIndex]" placeholder="Option">
-                  <button @click.prevent="removeOption(field, optIndex)">Supprimer</button>
-                </div>
-                <button @click.prevent="addOption(field)">Ajouter une option</button>
+              <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'" class="options-container">
+                <label class="options-label">Options:</label>
+                <div v-for="(option, optIndex) in field.props.options" :key="optIndex" class="option-item">
+                  <div class="option-input-container">
+                    <input type="text" v-model="field.props.options[optIndex]" placeholder="Option" class="option-input">
+                    <button @click.prevent="removeOption(field, optIndex)" class="option-button">
+                    <i class="fas fa-trash-alt"></i> <!-- Icône pour supprimer -->
+                     </button>
+                   </div>
+               </div>
+
+                <button @click.prevent="addOption(field)" class="add-option-button">
+                <i class="fas fa-plus"></i> <!-- Icône pour ajouter -->
+                Ajouter une option
+                 </button>
               </div>
+ 
               <button class="action-button" @click.prevent="editElement(index)">
                  <i class="fas fa-edit"></i> <!-- Icône pour éditer -->
               </button>
@@ -83,9 +93,19 @@
           </form>
         </div>
         <div class="fo-butt">
-          <button class="form-button" @click="togglePreviewMode">Prévisualiser</button>
-          <button class="form-button" @click="saveForm">Enregistrer </button>
-        </div>
+          
+            <button class="form-button" @click="togglePreviewMode">
+             <i class="fas fa-eye"></i> <!-- Icône pour prévisualiser -->
+             Prévisualiser
+            </button>
+
+            <button class="form-button" @click="saveForm">
+             <i class="fas fa-save"></i> <!-- Icône pour enregistrer -->
+             Enregistrer le formulaire
+            </button>
+       </div>
+
+         
       </div>
 
       <!-- Preview mode -->
@@ -99,14 +119,14 @@
             </div>
           </form>
         </div>
-        <button @click="togglePreviewMode">Revenir à l'édition</button>
+        <button class ="form-button" @click="togglePreviewMode">Revenir à l'édition</button>
       </div>
 
       <!-- Element editor modal -->
       <div class="element-editor" v-if="selectedElement !== null">
         <h2>Édition de l'élément</h2>
         <!-- Include an editor for the selected element here -->
-        <button @click="closeElementEditor">Fermer</button>
+        <button class ="form-button" @click="closeElementEditor">Fermer</button>
       </div>
 
       <!-- Form management interface -->
@@ -116,8 +136,8 @@
           <li v-for="(form, index) in savedForms" :key="index">
             <h3>{{ form.title }}</h3>
             <p>{{ form.description }}</p>
-            <button @click="loadForm(index)">Charger</button>
-            <button @click="deleteForm(index)">Supprimer</button>
+            <button class ="form-button" @click="loadForm(index)">Charger</button>
+            <button class ="form-button" @click="deleteForm(index)">Supprimer</button>
           </li>
         </ul>
       </div>
@@ -133,15 +153,16 @@ export default {
       previewMode: false,
       selectedElement: null,
       formElements: [
-        { type: 'text-input', label: 'Réponse courte' },
-        { type: 'paragraph-input', label: 'Paragraphe' },
-        { type: 'checkbox-group', label: 'Cases à cocher' },
-        { type: 'radio-group', label: 'Boutons radio' },
-        { type: 'dropdown', label: 'Menu déroulant' },
-        { type: 'date-picker', label: 'Date' },
-        { type: 'time-picker', label: 'Heure' },
-        { type: 'file-upload', label: 'Téléchargement de fichier' }
+      { type: 'text-input', label: 'Réponse courte', icon: 'fas fa-font' },
+      { type: 'paragraph-input', label: 'Paragraphe', icon: 'fas fa-align-left' },
+      { type: 'checkbox-group', label: 'Cases à cocher', icon: 'fas fa-check-square' },
+      { type: 'radio-group', label: 'Boutons radio', icon: 'fas fa-dot-circle' },
+      { type: 'dropdown', label: 'Menu déroulant', icon: 'fas fa-caret-down' },
+      { type: 'date-picker', label: 'Date', icon: 'fas fa-calendar-alt' },
+      { type: 'time-picker', label: 'Heure', icon: 'fas fa-clock' },
+      { type: 'file-upload', label: 'Téléchargement de fichier', icon: 'fas fa-upload' }
       ],
+
       formFields: [], // Array to store form fields
       savedForms: [] // Array to store saved forms
     };
@@ -324,6 +345,9 @@ export default {
   border-color: #3071a9; /* Bleu plus foncé au focus */
   box-shadow: 0 0 8px rgba(48, 113, 169, 0.4); /* Légère ombre au focus */
 }
+h2{
+  color: #3071a9;
+}
 
 .form-container {
   flex: 1;
@@ -429,6 +453,78 @@ input[type="file"] {
   border-radius: 4px;
   box-sizing: border-box;
 }
+.options-container { 
+    margin-top: 10px;
+  }
+
+.options-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #1a5276; /* Bleu sombre */
+  }
+
+.option-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+.option-input-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .option-input {
+    flex: 1;
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #b8c9dc; /* Bordure légèrement plus claire */
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+  }
+
+  .option-button {
+    margin-bottom: 20px;
+    padding: 8px;
+    background-color: #dc3545; /* Rouge */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+  }
+
+  .option-button i {
+    margin-right: 5px;
+  }
+
+  .option-button:hover {
+    background-color: #c82333; /* Rouge légèrement plus foncé au survol */
+  }
+
+  .add-option-button {
+    margin-top: 20px;
+    padding: 8px 12px;
+    background-color: #007bff; /* Bleu */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+  }
+
+  .add-option-button i {
+    margin-right: 5px;
+  }
+
+  .add-option-button:hover {
+    background-color: #0056b3; /* Bleu légèrement plus foncé au survol */
+  }
 
 /* Additional styles for form preview */
 .form-preview {

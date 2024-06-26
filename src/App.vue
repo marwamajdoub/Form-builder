@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1>FORM</h1>
+      <h1><i  class="fas fa-file-alt"></i>FORM BUILDER</h1>
     </header>
     <main>
       <router-view></router-view>
@@ -24,54 +24,42 @@ export default {
 </script>
 
 <style>
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f5f5;
-}
+ body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
 
-header {
-  background: linear-gradient(to right, #1e5799, #2989d8);
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
+    header {
+      background: linear-gradient(to right, #1e5799, #2989d8);
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: left; /* Alignement du texte à gauche */
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center; /* Centrer verticalement */
+    }
 
-@keyframes gradientAnimation {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+    header h1 {
+      color: white;
+      font-size: 36px;
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center; /* Centrer verticalement */
+    }
 
-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, #1e5799, #2989d8);
-  z-index: -1;
-  animation: gradientAnimation 10s linear infinite;
-}
+    header h1 i {
+      font-size: 40px; /* Taille de l'icône */
+      margin-right: 10px; /* Espacement entre l'icône et le texte */
+    }
 
-h1 {
-  color: white;
-  font-size: 40px;
-  margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-}
 
+    .form-icon {
+      margin-right: 10px; /* Espacement entre l'icône et le formulaire */
+    }
 main {
   display: flex;
   padding: 20px;
