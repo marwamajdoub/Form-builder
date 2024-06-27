@@ -111,11 +111,15 @@ export default {
     // Remplissez this.forms et this.templates avec les données récupérées
     this.forms = [
       { id: 1, name: 'Formulaire 1' },
-      { id: 2, name: 'Formulaire 2' }
+      { id: 2, name: 'Formulaire 2' },
+      {id:3,name:'Formulaire 3'}
+      
     ];
     this.templates = [
       { id: 1, name: 'Template 1' },
-      { id: 2, name: 'Template 2' }
+      { id: 2, name: 'Template 2' },
+      { id: 3, name: 'Template 3' },
+      {id:4,name :'Template 4'}
     ];
   }
 };
