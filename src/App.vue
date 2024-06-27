@@ -1,90 +1,87 @@
 <template>
   <div id="app">
-    <header>
-      <h1><i class="fas fa-file-alt"></i>FORM BUILDER</h1>
+    <header v-if="!isLoginPage">
+      <h1><i class="fas fa-file-alt"></i> FORM BUILDER</h1>
       <nav>
-        <router-link to="/form-builder">Form Builder</router-link>
+        <router-link to="/form-builder">Créer</router-link>
         <router-link to="/home">Home</router-link>
       </nav>
     </header>
-    <main>
+    <main :class="{ 'centered-content': isLoginPage }">
       <router-view></router-view>
     </main>
   </div>
 </template>
-<script>
 
+<script>
 export default {
-  name: 'App'
-  
+  computed: {
+    isLoginPage() {
+      return this.$route.path === '/login'; // Chemin de votre page de connexion
+    }
+  }
 };
 </script>
 
-<style>
- body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-
-    header {
-      background: linear-gradient(to right, #1e5799, #2989d8);
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: left; /* Alignement du texte à gauche */
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center; /* Centrer verticalement */
-    }
-
-    header h1 {
-      color: white;
-      font-size: 36px;
-      margin: 0;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center; /* Centrer verticalement */
-    }
-
-    header h1 i {
-      font-size: 40px; /* Taille de l'icône */
-      margin-right: 10px; /* Espacement entre l'icône et le texte */
-    }
-
-
-    .form-icon {
-      margin-right: 10px; /* Espacement entre l'icône et le formulaire */
-    }
-main {
+<style scoped>
+#app {
   display: flex;
-  padding: 20px;
-}
-
-.sidebar {
-  width: 200px; /* Largeur de la barre latérale */
-  background-color: white; /* Couleur de fond de la barre latérale */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.sidebar:hover {
-  transform: scale(1.02);
-}
-
-.form-builder {
-  flex: 1; /* Pour occuper tout l'espace restant */
+  flex-direction: column;
+  height: 100vh;
   background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+ 
 }
 
-.form-builder:hover {
-  transform: scale(1.02);
+header {
+  background: linear-gradient(to right, #1e5799, #2989d8);
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+header h1 {
+  color: white;
+  font-size: 36px;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+}
+
+header h1 i {
+  font-size: 40px;
+  margin-right: 10px;
+}
+
+nav {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Assurez-vous de spécifier la valeur de height */
+  padding: 20px; /* Ajoutez du padding si nécessaire */
 }
 </style>

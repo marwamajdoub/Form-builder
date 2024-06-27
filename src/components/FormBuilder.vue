@@ -151,8 +151,9 @@
 </template>
 <script>
 import Quill from 'quill';
-
 export default {
+  name: 'FormBuilder',
+
   data() {
     return {
       formTitle: '',

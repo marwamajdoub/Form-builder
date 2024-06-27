@@ -1,10 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import FormBuilder from '../components/FormBuilder.vue';
 import HomePage from '../components/HomePage.vue';
+import FormBuilder from '../components/FormBuilder.vue';
+import LoginPage from '../components/LoginPage.vue'; // Mettez à jour le chemin vers LoginPage.vue
 
 const routes = [
-  { path: '/', component: HomePage },
-  { path: '/form-builder', component: FormBuilder }
+  {
+    path: '/',
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginPage // Utilisez le composant LoginPage
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: HomePage
+  },
+  {
+    path: '/form-builder',
+    name: 'FormBuilder',
+    component: FormBuilder
+  }
 ];
 
 const router = createRouter({
