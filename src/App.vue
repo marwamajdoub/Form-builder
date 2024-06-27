@@ -33,7 +33,7 @@ export default {
 }
 
 header {
-  background: linear-gradient(to right, #1e5799, #2989d8);
+  background: white;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: left;
@@ -44,8 +44,8 @@ header {
 }
 
 header h1 {
-  color: white;
-  font-size: 36px;
+  color:  #007bff;
+  font-size: 30px;
   margin: 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -53,7 +53,7 @@ header h1 {
 }
 
 header h1 i {
-  font-size: 40px;
+  font-size: 30px;
   margin-right: 10px;
 }
 
@@ -64,7 +64,7 @@ nav {
 }
 
 nav a {
-  color: white;
+  color: #007bff;
   text-decoration: none;
   font-size: 18px;
   font-weight: bold;
@@ -74,7 +74,7 @@ nav a {
 }
 
 nav a:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(12, 5, 86, 0.2);
 }
 
 .centered-content {

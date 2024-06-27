@@ -434,6 +434,7 @@ h2{
   transform: translateY(-2px); /* Légère élévation au survol */
 }
 .action-button {
+    margin-top: 20px;
     background-color: transparent;
     border: none;
     color: #007bff; /* Couleur de texte bleue */
@@ -601,4 +602,5 @@ input[type="file"] {
 .form-list h3 {
   margin-bottom: 10px;
 }
+
 </style>
