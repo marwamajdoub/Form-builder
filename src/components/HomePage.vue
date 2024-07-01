@@ -1,16 +1,14 @@
 <template>
   <div class="home-container">
-    <div class="sidebar-container">
-      <Sidebar />
-    </div>
-    <div class="main-content">
-      <div class="view-toggle">
-        <button @click="toggleViewMode">
-          <i :class="viewMode === 'grid' ? 'fas fa-list' : 'fas fa-th'"></i>
-        </button>
+    <Sidebar :isAdmin="isAdmin" />
+    <div class="content">
+      <div class="view-mode-buttons">
+        <button @click="toggleViewMode" :class="{ active: isGridView }"><i class="fas fa-th"></i> Grille</button>
+        <button @click="toggleViewMode" :class="{ active: !isGridView }"><i class="fas fa-list"></i> Liste</button>
       </div>
+      
       <h2>Vos formulaires</h2>
-      <div :class="['form-grid', viewMode]">
+      <div v-if="isGridView" class="form-grid">
         <div class="form-card" v-for="form in forms" :key="form.id">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
@@ -28,8 +26,14 @@
           </div>
         </div>
       </div>
+      <ul v-else class="form-list">
+        <li class="form-item" v-for="form in forms" :key="form.id">
+          <i class="fas fa-file-alt"></i> {{ form.name }}
+        </li>
+      </ul>
+
       <h2>Templates</h2>
-      <div :class="['form-grid', viewMode]">
+      <div v-if="isGridView" class="form-grid">
         <div class="form-card" v-for="template in templates" :key="template.id">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
@@ -38,7 +42,20 @@
             <h3>{{ template.name }}</h3>
           </div>
         </div>
+        <div class="form-card new-form" @click="goToTemplateBuilder">
+          <div class="form-card-icon">
+            <i class="fas fa-plus"></i>
+          </div>
+          <div class="form-card-content">
+            <h3>Créer un nouveau template</h3>
+          </div>
+        </div>
       </div>
+      <ul v-else class="form-list">
+        <li class="form-item" v-for="template in templates" :key="template.id">
+          <i class="fas fa-file-alt"></i> {{ template.name }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -52,59 +69,75 @@ export default {
   },
   data() {
     return {
-      viewMode: 'grid',
-      forms: [
-        { id: 1, name: 'Formulaire 1' },
-        { id: 2, name: 'Formulaire 2' }
-      ],
-      templates: [
-        { id: 1, name: 'Template 1' },
-        { id: 2, name: 'Template 2' }
-      ]
+      forms: [],
+      templates: [],
+      isGridView: true,
+      isAdmin: true // Toggle this to switch between admin and user modes
     };
   },
   methods: {
     toggleViewMode() {
-      this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
+      this.isGridView = !this.isGridView;
     },
     goToFormBuilder() {
-      this.$router.push({ name: 'FormBuilder' });
+      this.$router.push({ name: 'FormBuilder' }); // Naviguer vers FormBuilder
+    },
+    goToTemplateBuilder() {
+      this.$router.push({ name: 'TemplateBuilder' }); // Naviguer vers TemplateBuilder
     }
+  },
+  created() {
+    this.forms = [
+      { id: 1, name: 'Formulaire 1' },
+      { id: 2, name: 'Formulaire 2' }
+    ];
+    this.templates = [
+      { id: 1, name: 'Template 1' },
+      { id: 2, name: 'Template 2' }
+    ];
   }
 };
 </script>
 
 <style scoped>
+/* Styles spécifiques au composant HomePage */
 .home-container {
   display: flex;
 }
 
-.sidebar-container {
-  flex: 0 0 250px;
-}
-
-.main-content {
+.content {
   flex: 1;
   padding: 20px;
 }
 
-.view-toggle {
+.view-mode-buttons {
   display: flex;
-  justify-content: flex-end;
+  gap: 10px;
   margin-bottom: 20px;
+}
+
+.view-mode-buttons button {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.view-mode-buttons button:hover {
+  background-color: #0056b3;
+}
+
+.view-mode-buttons .active {
+  background-color: #0056b3;
 }
 
 .form-grid {
   display: grid;
-  gap: 20px;
-}
-
-.form-grid.grid {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-
-.form-grid.list {
-  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .form-card {
@@ -115,12 +148,13 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
 }
 
 .form-card:hover {
   transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .form-card-icon {
@@ -132,10 +166,41 @@ export default {
 .form-card-content h3 {
   font-size: 18px;
   color: #333;
+  text-align: center;
 }
 
 .new-form {
   background-color: #f1f1f1;
   border: 2px dashed #007bff;
+}
+
+.form-list {
+  list-style: none;
+  padding: 0;
+}
+
+.form-item {
+  padding: 15px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.form-item:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.form-item i {
+  margin-right: 10px;
+}
+
+.form-item:hover i {
+  color: white;
 }
 </style>
