@@ -1,7 +1,10 @@
+// src/router/index.js
+
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import FormBuilder from '../components/FormBuilder.vue';
-import LoginPage from '../components/LoginPage.vue'; // Mettez à jour le chemin vers LoginPage.vue
+import LoginPage from '../components/LoginPage.vue';
+import SignUp from '../components/SignUp.vue'; // Import the SignUpPage component
 
 const routes = [
   {
@@ -11,7 +14,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: LoginPage // Utilisez le composant LoginPage
+    component: LoginPage
   },
   {
     path: '/home',
@@ -22,6 +25,11 @@ const routes = [
     path: '/form-builder',
     name: 'FormBuilder',
     component: FormBuilder
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUp // Add the SignUpPage route
   }
 ];
 

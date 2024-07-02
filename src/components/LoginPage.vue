@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig'; // Import the initialized auth instance
 
 export default {
   data() {
@@ -50,32 +51,23 @@ export default {
     toggleMode() {
       this.isLogin = !this.isLogin;
     },
-    handleSubmit() {
-      const auth = getAuth();
-      if (this.isLogin) {
-        signInWithEmailAndPassword(auth, this.email, this.password)
-          .then(() => {
-            // Signed in successfully
-            this.$router.push('/home');
-          })
-          .catch((error) => {
-            alert('Identifiants incorrects: ' + error.message);
-          });
-      } else {
-        createUserWithEmailAndPassword(auth, this.email, this.password)
-          .then(() => {
-            // Account created successfully
-            this.$router.push('/home');
-          })
-          .catch((error) => {
-            alert('Erreur de création de compte: ' + error.message);
-          });
+    async handleSubmit() {
+      try {
+        if (this.isLogin) {
+          await signInWithEmailAndPassword(auth, this.email, this.password);
+          this.$router.push('/home');
+        } else {
+          await createUserWithEmailAndPassword(auth, this.email, this.password);
+          this.$router.push('/home');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(this.isLogin ? 'Identifiants incorrects' : 'Erreur de création du compte');
       }
     }
   }
 };
 </script>
-
 <style scoped>
 .form-builder-section {
   text-align: center;
@@ -150,7 +142,7 @@ p {
   color: #007bff;
 }
 
-.title{
-  color:  #007bff;
+.title {
+  color: #007bff;
 }
 </style>
