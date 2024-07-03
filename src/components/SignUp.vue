@@ -1,80 +1,46 @@
 <template>
-    <div class="auth-container">
-      <div class="auth-form">
-        <h2>Créer un compte</h2>
-        <form @submit.prevent="handleSignUp">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              v-model="email"
-              required
-              placeholder="Entrez votre email"
-            />
-          </div>
-          <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <input
-              type="password"
-              id="password"
-              v-model="password"
-              required
-              placeholder="Entrez votre mot de passe"
-            />
-          </div>
-          <div class="form-group">
-            <label for="name">Nom</label>
-            <input
-              type="text"
-              id="name"
-              v-model="name"
-              required
-              placeholder="Entrez votre nom"
-            />
-          </div>
-          <button type="submit">Créer un compte</button>
-        </form>
-      </div>
+    <div>
+      <h2>Inscription</h2>
+      <form @submit.prevent="signUp">
+        <input type="email" v-model="email" placeholder="Email" required>
+        <input type="password" v-model="password" placeholder="Mot de passe" required>
+        <button type="submit">S'inscrire</button>
+      </form>
     </div>
   </template>
   
   <script>
-  import { createUserWithEmailAndPassword } from 'firebase/auth';
-  import { doc, setDoc } from 'firebase/firestore';
-  import { auth, db } from '../firebaseConfig';
+  import firebase from '../firebaseConfig';
   
   export default {
     data() {
       return {
         email: '',
-        password: '',
-        name: ''
+        password: ''
       };
     },
     methods: {
-      async handleSignUp() {
+      async signUp() {
         try {
-          const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
-          const user = userCredential.user;
+          const userCredential = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
+          const userId = userCredential.user.uid;
   
-          // Ajoutez l'utilisateur à la collection Firestore avec un rôle
-          await setDoc(doc(db, 'users', user.uid), {
+          // Ajouter l'utilisateur dans Firestore avec le rôle "user"
+          await firebase.firestore().collection('users').doc(userId).set({
             email: this.email,
-            name: this.name,
-            role: 'user', // Définissez le rôle ici (par défaut 'user')
-            createdAt: new Date()
+            role: 'user'
           });
   
+          // Rediriger l'utilisateur après l'inscription
           this.$router.push('/home');
         } catch (error) {
-          console.error('Error:', error);
-          alert('Erreur de création du compte');
+          console.error('Erreur lors de l\'inscription:', error);
         }
       }
     }
   };
   </script>
+  
   
   <style scoped>
   .form-builder-section {
