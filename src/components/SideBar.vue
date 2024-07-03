@@ -5,16 +5,12 @@
         <li @click="goToFormBuilder"><i class="fas fa-plus"></i> Créer un nouveau formulaire</li>
         <li @click="viewAllForms"><i class="fas fa-list"></i> Voir tous les formulaires</li>
         <li @click="viewTemplates"><i class="fas fa-file-alt"></i> Voir les templates</li>
-        <li @click="editForm"><i class="fas fa-edit"></i> Modifier un formulaire</li>
-        <li @click="deleteForm"><i class="fas fa-trash"></i> Supprimer un formulaire</li>
-        <li @click="duplicateForm"><i class="fas fa-copy"></i> Dupliquer un formulaire</li>
-        <li @click="shareForm"><i class="fas fa-share"></i> Partager un formulaire</li>
         <li @click="viewResponses"><i class="fas fa-chart-bar"></i> Voir les réponses</li>
-        <li @click="viewAnalytics"><i class="fas fa-chart-pie"></i> Voir les analyses</li>
         <li @click="formSettings"><i class="fas fa-cog"></i> Paramètres du formulaire</li>
         <li @click="exportResponses"><i class="fas fa-file-export"></i> Exporter les réponses</li>
-        <li @click="templatesLibrary"><i class="fas fa-book"></i> Bibliothèque de templates</li>
+        <li @click="exportResponses"><i class="fas fa-file-export"></i> Exporter un formulaire</li>
         <li @click="importForm"><i class="fas fa-file-import"></i> Importer un formulaire</li>
+        <li @click="importForm"><i class="fas fa-file-import"></i> Importer une template</li>
         <li @click="collaborate"><i class="fas fa-users"></i> Collaborer</li>
         <li @click="formArchive"><i class="fas fa-archive"></i> Formulaires archivés</li>
       </ul>

@@ -42,7 +42,7 @@
   <script>
   import { createUserWithEmailAndPassword } from 'firebase/auth';
   import { doc, setDoc } from 'firebase/firestore';
-  import { auth, db } from '../firebaseConfig'; // Import the auth and db instances
+  import { auth, db } from '../firebaseConfig';
   
   export default {
     data() {
@@ -57,11 +57,12 @@
         try {
           const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
           const user = userCredential.user;
-          
-          // Add user to the Firestore collection
+  
+          // Ajoutez l'utilisateur à la collection Firestore avec un rôle
           await setDoc(doc(db, 'users', user.uid), {
             email: this.email,
             name: this.name,
+            role: 'user', // Définissez le rôle ici (par défaut 'user')
             createdAt: new Date()
           });
   
@@ -74,7 +75,6 @@
     }
   };
   </script>
-  
   
   <style scoped>
   .form-builder-section {
