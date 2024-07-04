@@ -1,40 +1,53 @@
 <template>
     <div>
-      <h2>Inscription</h2>
-      <form @submit.prevent="signUp">
-        <input type="email" v-model="email" placeholder="Email" required>
-        <input type="password" v-model="password" placeholder="Mot de passe" required>
-        <button type="submit">S'inscrire</button>
+      <h2>Sign Up</h2>
+      <form @submit.prevent="handleSignUp">
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" v-model="email" required>
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" v-model="password" required>
+        </div>
+        <button type="submit">Sign Up</button>
       </form>
     </div>
   </template>
   
   <script>
-  import firebase from '../firebaseConfig';
+
+  import { createUserWithEmailAndPassword } from 'firebase/auth';
+  import { auth, db } from '../firebaseConfig'; // Assurez-vous d'importer 'auth' depuis firebaseConfig.js
+
   
   export default {
     data() {
       return {
         email: '',
-        password: ''
+        password: '',
+        role: 'user'
       };
     },
     methods: {
-      async signUp() {
+      async handleSignUp() {
         try {
-          const userCredential = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
-          const userId = userCredential.user.uid;
+          const { email, password, role } = this;
+          
+          // Utilisez Firebase Authentication pour créer un nouvel utilisateur
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
   
-          // Ajouter l'utilisateur dans Firestore avec le rôle "user"
-          await firebase.firestore().collection('users').doc(userId).set({
-            email: this.email,
-            role: 'user'
+          // Ajoutez l'utilisateur à la collection 'users' dans Firestore
+          await db.collection('users').doc(user.uid).set({
+            email: user.email,
+            role: role,
           });
   
-          // Rediriger l'utilisateur après l'inscription
+          // Redirigez l'utilisateur vers la page d'accueil après l'inscription réussie
           this.$router.push('/home');
         } catch (error) {
-          console.error('Erreur lors de l\'inscription:', error);
+          console.error('Erreur lors de l\'inscription :', error.message);
         }
       }
     }

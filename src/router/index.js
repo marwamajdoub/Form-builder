@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import FormBuilder from '../components/FormBuilder.vue';
 import LoginPage from '../components/LoginPage.vue';
-import AdminPage from '../components/AdminPage.vue'; // Chemin vers AdminPage correct
 import SignUp from '../components/SignUp.vue'; // Chemin vers SignUp correct
 import firebase from '../firebaseConfig'; // Chemin vers firebaseConfig.js correct
 
@@ -26,12 +25,7 @@ const routes = [
     name: 'FormBuilder',
     component: FormBuilder
   },
-  {
-    path: '/admin',
-    name: 'Admin',
-    component: AdminPage,
-    meta: { requiresAdmin: true } // Protection d'accès admin
-  },
+  
   {
     path: '/signup',
     name: 'SignUp',
