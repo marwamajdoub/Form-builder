@@ -1,53 +1,37 @@
 <template>
     <div>
-      <h2>Sign Up</h2>
+      <h1>Sign Up</h1>
       <form @submit.prevent="handleSignUp">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" v-model="email" required>
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" v-model="password" required>
-        </div>
+        <input v-model="email" type="email" placeholder="Email" required>
+        <input v-model="password" type="password" placeholder="Password" required>
+        <select v-model="role">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
         <button type="submit">Sign Up</button>
       </form>
     </div>
   </template>
   
   <script>
-
-  import { createUserWithEmailAndPassword } from 'firebase/auth';
-  import { auth, db } from '../firebaseConfig'; // Assurez-vous d'importer 'auth' depuis firebaseConfig.js
-
+  import { signUp } from '../services/authService';
   
   export default {
     data() {
       return {
         email: '',
         password: '',
-        role: 'user'
+        role: 'user', // Par défaut, tous les nouveaux utilisateurs sont des utilisateurs normaux
       };
     },
     methods: {
       async handleSignUp() {
         try {
-          const { email, password, role } = this;
-          
-          // Utilisez Firebase Authentication pour créer un nouvel utilisateur
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-  
-          // Ajoutez l'utilisateur à la collection 'users' dans Firestore
-          await db.collection('users').doc(user.uid).set({
-            email: user.email,
-            role: role,
-          });
-  
-          // Redirigez l'utilisateur vers la page d'accueil après l'inscription réussie
-          this.$router.push('/home');
+          await signUp(this.email, this.password, this.role);
+          alert('Utilisateur créé avec succès !');
+          this.$router.push('/login'); // Redirigez l'utilisateur vers la page de connexion après l'inscription
         } catch (error) {
-          console.error('Erreur lors de l\'inscription :', error.message);
+          alert('Erreur lors de la création de l\'utilisateur : ' + error.message);
         }
       }
     }
