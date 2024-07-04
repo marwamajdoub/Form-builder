@@ -1,43 +1,30 @@
 <template>
     <div>
-      <h1>Sign Up</h1>
-      <form @submit.prevent="handleSignUp">
-        <input v-model="email" type="email" placeholder="Email" required>
-        <input v-model="password" type="password" placeholder="Password" required>
-        <select v-model="role">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button type="submit">Sign Up</button>
-      </form>
+      <h2>Inscription</h2>
+  
+      <!-- Exemple d'utilisation de ref avec un champ de saisie -->
+      <input type="text" v-model="usernameRef" placeholder="Nom d'utilisateur">
+  
+      <button @click="register">S'inscrire</button>
     </div>
   </template>
   
   <script>
-  import { signUp } from '../services/authService';
-  
-  export default {
-    data() {
-      return {
-        email: '',
-        password: '',
-        role: 'user', // Par défaut, tous les nouveaux utilisateurs sont des utilisateurs normaux
-      };
-    },
-    methods: {
-      async handleSignUp() {
-        try {
-          await signUp(this.email, this.password, this.role);
-          alert('Utilisateur créé avec succès !');
-          this.$router.push('/login'); // Redirigez l'utilisateur vers la page de connexion après l'inscription
-        } catch (error) {
-          alert('Erreur lors de la création de l\'utilisateur : ' + error.message);
-        }
-      }
+   import { createUserWithEmailAndPassword } from '../services/Service';
+
+   export default {
+   // Autres options de composant
+   methods: {
+    register() {
+      const email = this.email; // Supposons que vous avez bindé l'email avec v-model
+      const password = this.password; // Supposons que vous avez bindé le mot de passe avec v-model
+
+      // Appeler la fonction pour créer un compte utilisateur avec Firebase
+      createUserWithEmailAndPassword(email, password);
     }
-  };
-  </script>
-  
+  }
+};
+</script>
   
   <style scoped>
   .form-builder-section {

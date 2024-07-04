@@ -2,8 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import FormBuilder from '../components/FormBuilder.vue';
 import LoginPage from '../components/LoginPage.vue';
-import SignUp from '../components/SignUp.vue'; // Chemin vers SignUp correct
-import firebase from '../firebaseConfig'; // Chemin vers firebaseConfig.js correct
+
+// Importez auth et db depuis firebaseConfig
+import { auth } from '../firebaseConfig';
 
 const routes = [
   {
@@ -18,19 +19,16 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
-    component: HomePage
+    component: HomePage,
+    meta: { requiresAuth: true } // Ajoutez une meta si l'accès nécessite une authentification
   },
   {
     path: '/form-builder',
     name: 'FormBuilder',
-    component: FormBuilder
-  },
-  
-  {
-    path: '/signup',
-    name: 'SignUp',
-    component: SignUp
+    component: FormBuilder,
+    meta: { requiresAuth: true } // Ajoutez une meta si l'accès nécessite une authentification
   }
+  
 ];
 
 const router = createRouter({
@@ -38,34 +36,14 @@ const router = createRouter({
   routes
 });
 
-// Garde de navigation pour les routes nécessitant un rôle d'administration
 router.beforeEach((to, from, next) => {
-  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
-  if (requiresAdmin) {
-    const user = firebase.auth().currentUser;
-    if (user) {
-      firebase.firestore().collection('users').doc(user.uid).get()
-        .then((doc) => {
-          if (doc.exists) {
-            const userData = doc.data();
-            if (userData.role === 'admin') {
-              next();
-            } else {
-              next('/home'); // Rediriger vers la page d'accueil si non admin
-            }
-          } else {
-            console.error('Aucun document utilisateur trouvé');
-            next('/login');
-          }
-        }).catch((error) => {
-          console.error('Erreur lors de la récupération du document utilisateur:', error);
-          next('/login');
-        });
-    } else {
-      next('/login');
-    }
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const currentUser = auth.currentUser;
+
+  if (requiresAuth && !currentUser) {
+    next('/login'); // Rediriger vers la page de connexion si non authentifié
   } else {
-    next();
+    next(); // Autoriser l'accès aux autres routes
   }
 });
 
