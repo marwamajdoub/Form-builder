@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import FormBuilder from '../components/FormBuilder.vue';
-import LoginPage from '../components/LoginPage.vue';
+import AuthComponent from '../components/AuthComponent.vue'; // Importez votre nouveau composant
 
-import { auth } from '../firebaseConfig'; // Import the initialized auth instance
+// Importez auth et db depuis firebaseConfig
+import { auth } from '../firebaseConfig';
 
 const routes = [
   {
@@ -13,9 +14,13 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: LoginPage
+    component: AuthComponent // Utilisez le nouveau composant pour la route de login
   },
-  
+  {
+    path: '/signup',
+    name: 'Signup',
+    component: AuthComponent // Utilisez le même composant pour la route de signup
+  },
   {
     path: '/home',
     name: 'Home',
