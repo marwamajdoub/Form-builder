@@ -1,22 +1,26 @@
 <template>
   <div class="home-container">
+    <!-- Composant Sidebar pour la gestion -->
     <Sidebar :isAdmin="isAdmin" />
+
+    <!-- Contenu principal -->
     <div class="content">
+      <!-- Boutons pour basculer entre la vue grille et liste -->
       <div class="view-mode-buttons">
-        <button @click="toggleViewMode" :class="{ active: isGridView }"> Grille</button>
-        <button @click="toggleViewMode" :class="{ active: !isGridView }">Liste</button>
+        <button @click="toggleViewMode(true)" :class="{ active: isGridView }"> Grille</button>
+        <button @click="toggleViewMode(false)" :class="{ active: !isGridView }">Liste</button>
       </div>
       
+      <!-- Section pour afficher les formulaires -->
       <h2>Vos formulaires</h2>
       <div v-if="isGridView" class="form-grid">
-        <div class="form-card" v-for="form in forms" :key="form.id">
+        <div class="form-card" v-for="form in forms" :key="form.id" @click="editForm(form.id)">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
           </div>
           <div class="form-card-content">
             <h3>{{ form.name }}</h3>
             <div class="form-card-actions">
-              <i class="fas fa-edit" @click="editForm(form.id)"></i>
               <i class="fas fa-copy" @click="duplicateForm(form.id)"></i>
               <i class="fas fa-trash" @click="deleteForm(form.id)"></i>
               <i class="fas fa-share" @click="shareForm(form.id)"></i>
@@ -33,10 +37,9 @@
         </div>
       </div>
       <ul v-else class="form-list">
-        <li class="form-item" v-for="form in forms" :key="form.id">
+        <li class="form-item" v-for="form in forms" :key="form.id" @click="editForm(form.id)">
           <i class="fas fa-file-alt"></i> {{ form.name }}
           <div class="form-item-actions">
-            <i class="fas fa-edit" @click="editForm(form.id)"></i>
             <i class="fas fa-copy" @click="duplicateForm(form.id)"></i>
             <i class="fas fa-trash" @click="deleteForm(form.id)"></i>
             <i class="fas fa-share" @click="shareForm(form.id)"></i>
@@ -44,16 +47,16 @@
         </li>
       </ul>
 
+      <!-- Section pour afficher les templates -->
       <h2>Templates</h2>
       <div v-if="isGridView" class="form-grid">
-        <div class="form-card" v-for="template in templates" :key="template.id">
+        <div class="form-card" v-for="template in templates" :key="template.id" @click="editTemplate(template.id)">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
           </div>
           <div class="form-card-content">
             <h3>{{ template.name }}</h3>
             <div class="form-card-actions">
-              <i class="fas fa-edit" @click="editTemplate(template.id)"></i>
               <i class="fas fa-copy" @click="duplicateTemplate(template.id)"></i>
               <i class="fas fa-trash" @click="deleteTemplate(template.id)"></i>
               <i class="fas fa-share" @click="shareTemplate(template.id)"></i>
@@ -70,10 +73,9 @@
         </div>
       </div>
       <ul v-else class="form-list">
-        <li class="form-item" v-for="template in templates" :key="template.id">
+        <li class="form-item" v-for="template in templates" :key="template.id" @click="editTemplate(template.id)">
           <i class="fas fa-file-alt"></i> {{ template.name }}
           <div class="form-item-actions">
-            <i class="fas fa-edit" @click="editTemplate(template.id)"></i>
             <i class="fas fa-copy" @click="duplicateTemplate(template.id)"></i>
             <i class="fas fa-trash" @click="deleteTemplate(template.id)"></i>
             <i class="fas fa-share" @click="shareTemplate(template.id)"></i>
@@ -83,8 +85,9 @@
     </div>
   </div>
 </template>
+
 <script>
-import Sidebar from './SideBar.vue';
+import Sidebar from './SideBar.vue'; // Importez votre composant Sidebar ici
 
 export default {
   components: {
@@ -92,56 +95,68 @@ export default {
   },
   data() {
     return {
-      forms: [],
-      templates: [],
-      isGridView: true,
-      isAdmin: true // Toggle this to switch between admin and user modes
+      forms: [], // Tableau pour stocker les formulaires
+      templates: [], // Tableau pour stocker les templates
+      isGridView: true, // Indicateur pour le mode d'affichage (grille ou liste)
+      isAdmin: true // Indicateur pour le mode administrateur (user ou admin)
     };
   },
   methods: {
-    toggleViewMode() {
-      this.isGridView = !this.isGridView;
+    // Méthode pour basculer entre la vue grille et liste
+    toggleViewMode(isGrid) {
+      this.isGridView = isGrid;
     },
+    // Méthode pour naviguer vers le FormBuilder
     goToFormBuilder() {
-      this.$router.push({ name: 'FormBuilder' }); // Naviguer vers FormBuilder
+      this.$router.push({ name: 'FormBuilder' });
     },
+    // Méthode pour naviguer vers le TemplateBuilder
     goToTemplateBuilder() {
-      this.$router.push({ name: 'TemplateBuilder' }); // Naviguer vers TemplateBuilder
+      this.$router.push({ name: 'TemplateBuilder' });
     },
+    // Méthode pour éditer un formulaire
     editForm(formId) {
       console.log(`Edit form ${formId}`);
-      // Add your form editing logic here
+      // Ajoutez ici votre logique d'édition de formulaire
     },
+    // Méthode pour dupliquer un formulaire
     duplicateForm(formId) {
       console.log(`Duplicate form ${formId}`);
-      // Add your form duplication logic here
+      // Ajoutez ici votre logique de duplication de formulaire
     },
+    // Méthode pour supprimer un formulaire
     deleteForm(formId) {
       console.log(`Delete form ${formId}`);
-      // Add your form deletion logic here
+      // Ajoutez ici votre logique de suppression de formulaire
     },
+    // Méthode pour partager un formulaire
     shareForm(formId) {
       console.log(`Share form ${formId}`);
-      // Add your form sharing logic here
+      // Ajoutez ici votre logique de partage de formulaire
     },
+    // Méthode pour éditer un template
     editTemplate(templateId) {
       console.log(`Edit template ${templateId}`);
-      // Add your template editing logic here
+      // Ajoutez ici votre logique d'édition de template
     },
+    // Méthode pour dupliquer un template
     duplicateTemplate(templateId) {
       console.log(`Duplicate template ${templateId}`);
-      // Add your template duplication logic here
+      // Ajoutez ici votre logique de duplication de template
     },
+    // Méthode pour supprimer un template
     deleteTemplate(templateId) {
       console.log(`Delete template ${templateId}`);
-      // Add your template deletion logic here
+      // Ajoutez ici votre logique de suppression de template
     },
+    // Méthode pour partager un template
     shareTemplate(templateId) {
       console.log(`Share template ${templateId}`);
-      // Add your template sharing logic here
+      // Ajoutez ici votre logique de partage de template
     }
   },
   created() {
+    // Exemple de données fictives pour les formulaires et les templates
     this.forms = [
       { id: 1, name: 'Formulaire 1' },
       { id: 2, name: 'Formulaire 2' }
@@ -153,8 +168,8 @@ export default {
   }
 };
 </script>
+
 <style scoped>
-/* Styles spécifiques au composant HomePage */
 .home-container {
   display: flex;
 }

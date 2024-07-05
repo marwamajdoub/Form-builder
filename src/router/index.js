@@ -3,8 +3,7 @@ import HomePage from '../components/HomePage.vue';
 import FormBuilder from '../components/FormBuilder.vue';
 import LoginPage from '../components/LoginPage.vue';
 
-// Importez auth et db depuis firebaseConfig
-import { auth } from '../firebaseConfig';
+import { auth } from '../firebaseConfig'; // Import the initialized auth instance
 
 const routes = [
   {
@@ -16,19 +15,19 @@ const routes = [
     name: 'Login',
     component: LoginPage
   },
+  
   {
     path: '/home',
     name: 'Home',
     component: HomePage,
-    meta: { requiresAuth: true } // Ajoutez une meta si l'accès nécessite une authentification
+    meta: { requiresAuth: true }
   },
   {
     path: '/form-builder',
     name: 'FormBuilder',
     component: FormBuilder,
-    meta: { requiresAuth: true } // Ajoutez une meta si l'accès nécessite une authentification
+    meta: { requiresAuth: true }
   }
-  
 ];
 
 const router = createRouter({
@@ -41,9 +40,9 @@ router.beforeEach((to, from, next) => {
   const currentUser = auth.currentUser;
 
   if (requiresAuth && !currentUser) {
-    next('/login'); // Rediriger vers la page de connexion si non authentifié
+    next('/login');
   } else {
-    next(); // Autoriser l'accès aux autres routes
+    next();
   }
 });
 

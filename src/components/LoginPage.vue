@@ -37,7 +37,8 @@
 
 <script>
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig'; // Import the initialized auth instance
+import { auth, db } from '../firebaseConfig'; // Import the initialized auth and db instances
+import { setDoc, doc } from 'firebase/firestore';
 
 export default {
   data() {
@@ -57,7 +58,16 @@ export default {
           await signInWithEmailAndPassword(auth, this.email, this.password);
           this.$router.push('/home');
         } else {
-          await createUserWithEmailAndPassword(auth, this.email, this.password);
+          const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+          const user = userCredential.user;
+          
+          // Add user to Firestore
+          await setDoc(doc(db, 'users', user.uid), {
+            email: user.email,
+            uid: user.uid,
+            createdAt: new Date()
+          });
+
           this.$router.push('/home');
         }
       } catch (error) {
@@ -68,6 +78,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .form-builder-section {
   text-align: center;
