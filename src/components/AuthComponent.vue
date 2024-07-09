@@ -104,7 +104,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
+    background: white ;
   }
   
   .auth-container {
@@ -177,6 +177,9 @@
   
   p:hover {
     text-decoration: underline;
+  }
+  i , h2.title{
+    color:#2575fc;
   }
   </style>
   
