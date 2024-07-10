@@ -8,8 +8,8 @@
         :key="index"
         @click="addElementToForm(element)"
       >
-       <i :class="element.icon"></i>
-       <span>{{ element.label }}</span>
+        <i :class="element.icon"></i>
+        <span>{{ element.label }}</span>
       </div>
     </div>
 
@@ -52,86 +52,80 @@
                 v-model="field.question"
                 placeholder="Entrez la question"
               />
-            <div>
-              <label :for="'field-' + index">{{ field.label }}</label>
-              <component
-                :is="field.type"
-                v-bind="field.props"
-                :id="'field-' + index"
-              ></component>
-              <div :id="'editor-' + index" class="quill-editor"></div>
-              <div :id="'editor-container-' + index"></div> 
-            </div>
-                <!-- Palette d'édition de texte -->
-          
-              <!-- Handling options for specific field types -->
-              <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'" class="options-container">
-                <label class="options-label">Options:</label>
-                <div v-for="(option, optIndex) in field.props.options" :key="optIndex" class="option-item">
-                  <div class="option-input-container">
-                    <input type="text" v-model="field.props.options[optIndex]" placeholder="Option" class="option-input">
-                    <button @click.prevent="removeOption(field, optIndex)" class="option-button">
-                    <i class="fas fa-trash-alt"></i> <!-- Icône pour supprimer -->
-                     </button>
-                   </div>
-               </div>
-
-                <button @click.prevent="addOption(field)" class="add-option-button">
-                <i class="fas fa-plus"></i> <!-- Icône pour ajouter -->
-                Ajouter une option
-                 </button>
+              <div v-if="field.type === 'text-input'">
+                <label :for="'field-' + index">{{ field.label }}</label>
+                <input
+                  type="text"
+                  v-bind="field.props"
+                  :id="'field-' + index"
+                />
               </div>
- 
+              <div v-if="field.type === 'paragraph-input'">
+                <label :for="'field-' + index">{{ field.label }}</label>
+                <textarea
+                  v-bind="field.props"
+                  :id="'field-' + index"
+                ></textarea>
+              </div>
+              <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'">
+                <label class="options-label">Options:</label>
+                <div
+                  v-for="(option, optIndex) in field.props.options"
+                  :key="optIndex"
+                  class="option-item"
+                >
+                  <div class="option-input-container">
+                    <input
+                      type="text"
+                      v-model="field.props.options[optIndex]"
+                      placeholder="Option"
+                      class="option-input"
+                    />
+                    <button
+                      @click.prevent="removeOption(field, optIndex)"
+                      class="option-button"
+                    >
+                      <i class="fas fa-trash-alt"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+                <button @click.prevent="addOption(field)" class="add-option-button">
+                  <i class="fas fa-plus"></i> Ajouter une option
+                </button>
+              </div>
               <button class="action-button" @click.prevent="editElement(index)">
-                 <i class="fas fa-edit"></i> <!-- Icône pour éditer -->
+                <i class="fas fa-edit"></i> Éditer
               </button>
-
-              <button  class="action-button" @click.prevent="duplicateElement(index)">
-                <i class="fas fa-copy"></i> <!-- Icône pour dupliquer -->
+              <button class="action-button" @click.prevent="duplicateElement(index)">
+                <i class="fas fa-copy"></i> Dupliquer
               </button>
-
-               <button  class="action-button" @click.prevent="deleteElement(index)">
-               <i class="fas fa-trash-alt"></i> <!-- Icône pour supprimer -->
+              <button class="action-button" @click.prevent="deleteElement(index)">
+                <i class="fas fa-trash-alt"></i> Supprimer
               </button>
-
             </div>
           </form>
         </div>
         <div class="fo-butt">
-          
-            <button class="form-button" @click="togglePreviewMode">
-             <i class="fas fa-eye"></i> <!-- Icône pour prévisualiser -->
-             Prévisualiser
-            </button>
-
-            <button class="form-button" @click="saveForm">
-             <i class="fas fa-save"></i> <!-- Icône pour enregistrer -->
-             Enregistrer le formulaire
-            </button>
-       </div>
-
-         
+          <button class="form-button" @click="togglePreviewMode">
+            <i class="fas fa-eye"></i> Prévisualiser
+          </button>
+          <button class="form-button" @click="saveForm">
+            <i class="fas fa-save"></i> Enregistrer le formulaire
+          </button>
+        </div>
       </div>
 
       <!-- Preview mode -->
       <div class="preview-container" v-else>
-        <h2>Aperçu du formulaire</h2>
-        <div class="form-preview">
-          <form>
-            <div v-for="(field, index) in formFields" :key="index">
-              <label :for="'field-' + index">{{ field.question }}</label>
-              <component :is="field.type" v-bind="field.props" :id="'field-' + index"></component>
-            </div>
-          </form>
-        </div>
-        <button class ="form-button" @click="togglePreviewMode">Revenir à l'édition</button>
+        <form-preview :formFields="formFields"></form-preview>
+        <button class="form-button" @click="togglePreviewMode">Revenir à l'édition</button>
       </div>
 
       <!-- Element editor modal -->
       <div class="element-editor" v-if="selectedElement !== null">
         <h2>Édition de l'élément</h2>
         <!-- Include an editor for the selected element here -->
-        <button class ="form-button" @click="closeElementEditor">Fermer</button>
+        <button class="form-button" @click="closeElementEditor">Fermer</button>
       </div>
 
       <!-- Form management interface -->
@@ -141,18 +135,24 @@
           <li v-for="(form, index) in savedForms" :key="index">
             <h3>{{ form.title }}</h3>
             <p>{{ form.description }}</p>
-            <button class ="form-button" @click="loadForm(index)">Charger</button>
-            <button class ="form-button" @click="deleteForm(index)">Supprimer</button>
+            <button class="form-button" @click="loadForm(index)">Charger</button>
+            <button class="form-button" @click="deleteForm(index)">Supprimer</button>
           </li>
         </ul>
       </div>
     </div>
   </div>
 </template>
+
 <script>
-import Quill from 'quill';
+import FormPreview from './FormPreview.vue';
+
 export default {
   name: 'FormBuilder',
+
+  components: {
+    FormPreview
+  },
 
   data() {
     return {
@@ -161,23 +161,21 @@ export default {
       previewMode: false,
       selectedElement: null,
       formElements: [
-      { type: 'text-input', label: 'Réponse courte', icon: 'fas fa-font' },
-      { type: 'paragraph-input', label: 'Paragraphe', icon: 'fas fa-align-left' },
-      { type: 'checkbox-group', label: 'Cases à cocher', icon: 'fas fa-check-square' },
-      { type: 'radio-group', label: 'Boutons radio', icon: 'fas fa-dot-circle' },
-      { type: 'dropdown', label: 'Menu déroulant', icon: 'fas fa-caret-down' },
-      { type: 'date-picker', label: 'Date', icon: 'fas fa-calendar-alt' },
-      { type: 'time-picker', label: 'Heure', icon: 'fas fa-clock' },
-      { type: 'file-upload', label: 'Téléchargement de fichier', icon: 'fas fa-upload' }
+        { type: 'text-input', label: 'Réponse courte', icon: 'fas fa-font' },
+        { type: 'paragraph-input', label: 'Paragraphe', icon: 'fas fa-align-left' },
+        { type: 'checkbox-group', label: 'Cases à cocher', icon: 'fas fa-check-square' },
+        { type: 'radio-group', label: 'Boutons radio', icon: 'fas fa-dot-circle' },
+        { type: 'dropdown', label: 'Menu déroulant', icon: 'fas fa-caret-down' },
+        { type: 'date-picker', label: 'Date', icon: 'fas fa-calendar-alt' },
+        { type: 'time-picker', label: 'Heure', icon: 'fas fa-clock' },
+        { type: 'file-upload', label: 'Téléchargement de fichier', icon: 'fas fa-upload' }
       ],
 
       formFields: [], // Array to store form fields
       savedForms: [] // Array to store saved forms
     };
   },
-  mounted() {
-    this.initializeEditors();
-  },
+
   methods: {
     // Handle click event to add element to form
     addElementToForm(element) {
@@ -194,84 +192,88 @@ export default {
       }
       this.formFields.push(newElement);
     },
+
     // Edit selected element
     editElement(index) {
       this.selectedElement = index;
       // Implement editing functionality
     },
+
     // Duplicate selected element
     duplicateElement(index) {
       const elementToDuplicate = { ...this.formFields[index] };
       this.formFields.splice(index + 1, 0, elementToDuplicate);
     },
+
     // Delete selected element
     deleteElement(index) {
-      this.formFields.splice(index, 1);
-      this.selectedElement = null; // Clear selected element after deletion
+      if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+        this.formFields.splice(index, 1);
+      }
     },
+
     // Toggle preview mode
     togglePreviewMode() {
       this.previewMode = !this.previewMode;
     },
-    // Close element editor
-    closeElementEditor() {
-      this.selectedElement = null;
-      // Implement functionality to close element editor
-    },
-    // Save the current form
+
+    // Save form to Firestore
     saveForm() {
-      const formToSave = {
+      const form = {
         title: this.formTitle,
         description: this.formDescription,
-        fields: [...this.formFields]
+        fields: this.formFields
       };
-      this.savedForms.push(formToSave);
-      // Optionally, you can save this form to a backend or localStorage
-      // Reset form title, description, and fields after saving
+      // Implement saving to Firestore
+      this.savedForms.push(form);
+      // Clear form after saving
       this.formTitle = '';
       this.formDescription = '';
       this.formFields = [];
     },
-    // Load a form from saved forms
+
+    // Load form from saved forms
     loadForm(index) {
-      const formToLoad = this.savedForms[index];
-      this.formTitle = formToLoad.title;
-      this.formDescription = formToLoad.description;
-      this.formFields = [...formToLoad.fields];
-      this.previewMode = false; // Exit preview mode after loading
+      const form = this.savedForms[index];
+      this.formTitle = form.title;
+      this.formDescription = form.description;
+      this.formFields = form.fields;
     },
-    // Delete a form from saved forms
+
+    // Delete form from saved forms
     deleteForm(index) {
-      this.savedForms.splice(index, 1);
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
+        this.savedForms.splice(index, 1);
+      }
     },
-    // Add an option to the field
+
+    // Add an option to a group element (checkbox-group, radio-group, dropdown)
     addOption(field) {
-      if (!field.props.options) {
-        this.$set(field.props, 'options', ['']);
-      } else {
+      if (field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown') {
         field.props.options.push('');
       }
     },
-    // Remove an option from the field
+
+    // Remove an option from a group element
     removeOption(field, index) {
-      field.props.options.splice(index, 1);
+      if (field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown') {
+        field.props.options.splice(index, 1);
+      }
     },
+
     // Get CSS class based on field type
     getFieldClass(type) {
-      return `form-field-${type}`;
+      return `form-field ${type}`;
     },
-    initializeEditors() {
-      this.formFields.forEach((field, index) => {
-        new Quill('#editor-container-' + index, {
-          theme: 'snow' // Thème Quill snow pour une interface simple
-        });
-      });
+
+    // Close element editor modal
+    closeElementEditor() {
+      this.selectedElement = null;
+      // Implement closing logic
     }
-  
   }
 };
 </script>
-
 
 <style scoped>
 .form-builder {

@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import FormBuilder from '../components/FormBuilder.vue';
-import AuthComponent from '../components/AuthComponent.vue'; // Importez votre nouveau composant
-
-// Importez auth et db depuis firebaseConfig
+import LoginPage from '../components/LoginPage.vue';
+import AdminPage from '../components/AdminPage.vue';
 import { auth } from '../firebaseConfig';
+import store from '../store';
 
 const routes = [
   {
@@ -14,12 +14,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: AuthComponent // Utilisez le nouveau composant pour la route de login
-  },
-  {
-    path: '/signup',
-    name: 'Signup',
-    component: AuthComponent // Utilisez le même composant pour la route de signup
+    component: LoginPage
   },
   {
     path: '/home',
@@ -32,6 +27,12 @@ const routes = [
     name: 'FormBuilder',
     component: FormBuilder,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: AdminPage,
+    meta: { requiresAuth: true, requiresAdmin: true }
   }
 ];
 
@@ -42,10 +43,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
   const currentUser = auth.currentUser;
+  const userRole = store.state.userRole;
 
   if (requiresAuth && !currentUser) {
     next('/login');
+  } else if (requiresAdmin && userRole !== 'admin') {
+    next('/home');
   } else {
     next();
   }
