@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
+import FormPreview from '../components/FormPreview.vue';
+
 import FormBuilder from '../components/FormBuilder.vue';
 import LoginPage from '../components/LoginPage.vue';
 import AdminPage from '../components/AdminPage.vue';
@@ -23,10 +25,22 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/preview',
+    name: 'FormPreview',
+    component: FormPreview,
+    props: true  // Pour passer les props au composant de prévisualisation
+  },
+  {
     path: '/form-builder',
     name: 'FormBuilder',
     component: FormBuilder,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/form-preview/:formId',
+    name: 'FormPreview',
+    component: () => import(/* webpackChunkName: "form-preview" */ '../components/FormPreview.vue'),
+    props: true
   },
   {
     path: '/admin',
@@ -57,3 +71,4 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+

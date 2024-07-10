@@ -130,16 +130,25 @@ export default {
       console.log(`Share template ${templateId}`);
     },
     async fetchForms() {
-      const querySnapshot = await getDocs(collection(db, 'forms'));
-      this.forms = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      try {
+        const formsCollection = collection(db, 'forms');
+        const querySnapshot = await getDocs(formsCollection);
+        this.forms = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error('Erreur lors de la récupération des formulaires: ', error);
+      }
+    },
+    async fetchTemplates() {
+      // Replace with actual logic to fetch templates from Firestore
+      this.templates = [
+        { id: 1, name: 'Template 1' },
+        { id: 2, name: 'Template 2' }
+      ];
     }
   },
   created() {
     this.fetchForms();
-    this.templates = [
-      { id: 1, name: 'Template 1' },
-      { id: 2, name: 'Template 2' }
-    ];
+    this.fetchTemplates();
   }
 };
 </script>
@@ -235,8 +244,6 @@ export default {
 .form-card-actions i:hover {
   color: #0056b3;
 }
-
-
 
 .new-form {
   background-color: #f1f1f1;

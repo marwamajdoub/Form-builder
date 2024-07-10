@@ -128,24 +128,16 @@
         <button class="form-button" @click="closeElementEditor">Fermer</button>
       </div>
 
-      <!-- Form management interface -->
-      <div class="form-management">
-        <h2>Gestion des Formulaires</h2>
-        <ul class="form-list">
-          <li v-for="(form, index) in savedForms" :key="index">
-            <h3>{{ form.title }}</h3>
-            <p>{{ form.description }}</p>
-            <button class="form-button" @click="loadForm(index)">Charger</button>
-            <button class="form-button" @click="deleteForm(index)">Supprimer</button>
-          </li>
-        </ul>
-      </div>
+      
     </div>
   </div>
 </template>
 
 <script>
 import FormPreview from './FormPreview.vue';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+
 
 export default {
   name: 'FormBuilder',
@@ -218,18 +210,23 @@ export default {
     },
 
     // Save form to Firestore
-    saveForm() {
-      const form = {
-        title: this.formTitle,
-        description: this.formDescription,
-        fields: this.formFields
-      };
-      // Implement saving to Firestore
-      this.savedForms.push(form);
-      // Clear form after saving
-      this.formTitle = '';
-      this.formDescription = '';
-      this.formFields = [];
+    async saveForm() {
+      try {
+        // Récupérer les données du formulaire (ex. this.formData)
+        const formData = {
+          title: 'Mon formulaire',
+          questions: [/* vos questions */]
+        };
+
+        // Enregistrer dans Firestore
+        const docRef = await addDoc(collection(db, 'forms'), formData);
+        console.log('Document enregistré avec ID: ', docRef.id);
+
+        // Redirection vers la page d'accueil
+        this.$router.push({ name: 'Home' });
+      } catch (error) {
+        console.error('Erreur lors de l\'enregistrement du formulaire: ', error);
+      }
     },
 
     // Load form from saved forms

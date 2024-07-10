@@ -1,12 +1,11 @@
 <template>
     <div class="form-preview">
+      <!-- Display form title and description -->
       <h2>{{ formTitle }}</h2>
       <p>{{ formDescription }}</p>
       
       <!-- Display form fields dynamically -->
       <div v-for="(field, index) in formFields" :key="index" class="form-field">
-        <label>{{ field.question }}</label>
-        
         <!-- Render different field types -->
         <template v-if="field.type === 'text-input'">
           <input type="text" :placeholder="field.props.placeholder" />
@@ -76,7 +75,7 @@
   }
   
   .form-preview h2 {
-    color: #007bff; /* Couleur de titre bleue */
+    color: #007bff;
     font-size: 2em;
     font-weight: 600;
     text-align: center;
@@ -84,10 +83,10 @@
   }
   
   .form-preview p {
-    color: #1a5276; /* Couleur de texte bleue sombre */
+    color: #1a5276;
     font-size: 1.2em;
-    margin-bottom: 20px; /* Espacement en bas */
     text-align: center;
+    margin-bottom: 20px;
   }
   
   .form-field {
