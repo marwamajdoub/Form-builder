@@ -8,7 +8,7 @@
       </div>
       <h2>Vos formulaires</h2>
       <div v-if="isGridView" class="form-grid">
-        <div class="form-card" v-for="form in forms" :key="form.id" @click="editForm(form.id)">
+        <div class="form-card" v-for="form in forms" :key="form.id" @click="previewForm(form.id)">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
           </div>
@@ -31,7 +31,7 @@
         </div>
       </div>
       <ul v-else class="form-list">
-        <li class="form-item" v-for="form in forms" :key="form.id" @click="editForm(form.id)">
+        <li class="form-item" v-for="form in forms" :key="form.id" @click="previewForm(form.id)">
           <i class="fas fa-file-alt"></i> {{ form.name }}
           <div class="form-item-actions">
             <i class="fas fa-copy" @click.stop="duplicateForm(form.id)"></i>
@@ -42,7 +42,7 @@
       </ul>
       <h2>Templates</h2>
       <div v-if="isGridView" class="form-grid">
-        <div class="form-card" v-for="template in templates" :key="template.id" @click="editTemplate(template.id)">
+        <div class="form-card" v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
           </div>
@@ -65,7 +65,7 @@
         </div>
       </div>
       <ul v-else class="form-list">
-        <li class="form-item" v-for="template in templates" :key="template.id" @click="editTemplate(template.id)">
+        <li class="form-item" v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)">
           <i class="fas fa-file-alt"></i> {{ template.name }}
           <div class="form-item-actions">
             <i class="fas fa-copy" @click.stop="duplicateTemplate(template.id)"></i>
@@ -81,8 +81,18 @@
 <script>
 import Sidebar from './SideBar.vue';
 import { db } from '../firebaseConfig';
+
+import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 
+const forms = ref([]);
+
+onMounted(async () => {
+  const querySnapshot = await getDocs(collection(db, 'forms'));
+  querySnapshot.forEach((doc) => {
+    forms.value.push({ id: doc.id, ...doc.data() });
+  });
+});
 export default {
   components: {
     Sidebar
@@ -105,45 +115,61 @@ export default {
     goToTemplateBuilder() {
       this.$router.push({ name: 'TemplateBuilder' });
     },
-    editForm(formId) {
-      console.log(`Edit form ${formId}`);
+    previewForm(formId) {
+      this.$router.push({ name: 'FormPreview', params: { id: formId } });
+    },
+    previewTemplate(templateId) {
+      this.$router.push({ name: 'TemplatePreview', params: { id: templateId } });
+    },
+    shareForm(formId) {
+      console.log(`Share form ${formId}`);
     },
     duplicateForm(formId) {
       console.log(`Duplicate form ${formId}`);
     },
     deleteForm(formId) {
-      console.log(`Delete form ${formId}`);
-    },
-    shareForm(formId) {
-      console.log(`Share form ${formId}`);
-    },
-    editTemplate(templateId) {
-      console.log(`Edit template ${templateId}`);
+      const confirmed = confirm("Êtes-vous sûr de vouloir supprimer ce formulaire?");
+      if (confirmed) {
+        db.collection('forms').doc(formId).delete()
+          .then(() => {
+            console.log("Formulaire supprimé avec succès");
+            // Rafraîchir la liste des formulaires après la suppression
+            this.fetchForms();
+          })
+          .catch(error => {
+            console.error("Erreur lors de la suppression du formulaire:", error);
+          });
+      }
     },
     duplicateTemplate(templateId) {
       console.log(`Duplicate template ${templateId}`);
     },
     deleteTemplate(templateId) {
-      console.log(`Delete template ${templateId}`);
+      const confirmed = confirm("Êtes-vous sûr de vouloir supprimer ce template?");
+      if (confirmed) {
+        db.collection('templates').doc(templateId).delete()
+          .then(() => {
+            console.log("Template supprimé avec succès");
+            // Rafraîchir la liste des templates après la suppression
+            this.fetchTemplates();
+          })
+          .catch(error => {
+            console.error("Erreur lors de la suppression du template:", error);
+          });
+      }
     },
     shareTemplate(templateId) {
       console.log(`Share template ${templateId}`);
     },
     async fetchForms() {
-      try {
-        const formsCollection = collection(db, 'forms');
-        const querySnapshot = await getDocs(formsCollection);
-        this.forms = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      } catch (error) {
-        console.error('Erreur lors de la récupération des formulaires: ', error);
-      }
+      const formsCollection = collection(db, 'forms');
+      const querySnapshot = await getDocs(formsCollection);
+      this.forms = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     },
     async fetchTemplates() {
-      // Replace with actual logic to fetch templates from Firestore
-      this.templates = [
-        { id: 1, name: 'Template 1' },
-        { id: 2, name: 'Template 2' }
-      ];
+      const templatesCollection = collection(db, 'templates');
+      const querySnapshot = await getDocs(templatesCollection);
+      this.templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
   },
   created() {
@@ -154,6 +180,7 @@ export default {
 </script>
 
 <style scoped>
+/* Styles spécifiques pour HomePage */
 .home-container {
   display: flex;
 }
@@ -259,24 +286,30 @@ export default {
   padding: 15px;
   border: 1px solid #ddd;
   margin-bottom: 10px;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  border-radius: 5px;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-.form-item:hover {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: white;
+  justify-content: space-between;
+  cursor: pointer;
 }
 
 .form-item i {
   margin-right: 10px;
+  color: #007bff;
 }
 
-.form-item:hover i {
-  color: white;
+.form-item-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.form-item-actions i {
+  cursor: pointer;
+  font-size: 18px;
+  color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.form-item-actions i:hover {
+  color: #0056b3;
 }
 </style>

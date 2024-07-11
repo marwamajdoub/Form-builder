@@ -6,6 +6,8 @@
       
       <!-- Display form fields dynamically -->
       <div v-for="(field, index) in formFields" :key="index" class="form-field">
+        <label>{{ field.question }}</label> <!-- Display the question -->
+        
         <!-- Render different field types -->
         <template v-if="field.type === 'text-input'">
           <input type="text" :placeholder="field.props.placeholder" />
@@ -59,11 +61,8 @@
       formFields: Array
     }
   };
-  </script>
-  
+  </script>  
   <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
-  
   .form-preview {
     font-family: 'Montserrat', sans-serif;
     background-color: #f9f9f9;
