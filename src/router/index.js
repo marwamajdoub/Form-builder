@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../components/HomePage.vue';
 import FormPreview from '../components/FormPreview.vue';
-
 import FormBuilder from '../components/FormBuilder.vue';
+import TemplatePreview from '../components/TemplatePreview.vue';
 import LoginPage from '../components/LoginPage.vue';
 import AdminPage from '../components/AdminPage.vue';
 import { auth } from '../firebaseConfig';
@@ -18,6 +18,7 @@ const routes = [
     name: 'Login',
     component: LoginPage
   },
+  
   {
     path: '/home',
     name: 'Home',
@@ -25,10 +26,10 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/preview',
+    path: '/form-preview/:id', // Chemin avec paramètre id
     name: 'FormPreview',
     component: FormPreview,
-    props: true  // Pour passer les props au composant de prévisualisation
+    props: true
   },
   {
     path: '/form-builder',
@@ -41,6 +42,12 @@ const routes = [
     name: 'FormPreview',
     component: () => import(/* webpackChunkName: "form-preview" */ '../components/FormPreview.vue'),
     props: true
+  },
+  {
+    path: '/template/:id', // Utilisation d'un paramètre dynamique pour l'ID du template
+    name: 'TemplatePreview',
+    component: TemplatePreview,
+    props: true // Permet de passer des paramètres en tant que props
   },
   {
     path: '/admin',

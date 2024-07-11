@@ -53,14 +53,27 @@
   </template>
   
   <script>
+
   export default {
     name: 'FormPreview',
     props: {
       formTitle: String,
       formDescription: String,
       formFields: Array
+    },
+    previewForm(formId) {
+      if (formId) {
+        this.$router.push({ name: 'FormPreview', params: { id: formId } });
+      } else {
+        console.error('Missing formId');
+      }
+    },
+    deleteForm(formId) {
+      // Implement your delete logic here
+      console.log('Deleting form with id:', formId);
     }
   };
+  
   </script>  
   <style scoped>
   .form-preview {

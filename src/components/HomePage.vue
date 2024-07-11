@@ -6,9 +6,11 @@
         <button @click="toggleViewMode(true)" :class="{ active: isGridView }">Grille</button>
         <button @click="toggleViewMode(false)" :class="{ active: !isGridView }">Liste</button>
       </div>
+      
+      <!-- Formulaires -->
       <h2>Vos formulaires</h2>
       <div v-if="isGridView" class="form-grid">
-        <div class="form-card" v-for="form in forms" :key="form.id" @click="previewForm(form.id)">
+        <div v-for="form in forms" :key="form.id" @click="previewForm(form.id)" class="form-card">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
           </div>
@@ -31,7 +33,7 @@
         </div>
       </div>
       <ul v-else class="form-list">
-        <li class="form-item" v-for="form in forms" :key="form.id" @click="previewForm(form.id)">
+        <li v-for="form in forms" :key="form.id" @click="previewForm(form.id)" class="form-item">
           <i class="fas fa-file-alt"></i> {{ form.name }}
           <div class="form-item-actions">
             <i class="fas fa-copy" @click.stop="duplicateForm(form.id)"></i>
@@ -40,9 +42,11 @@
           </div>
         </li>
       </ul>
+      
+      <!-- Templates -->
       <h2>Templates</h2>
       <div v-if="isGridView" class="form-grid">
-        <div class="form-card" v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)">
+        <div v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-card template-card">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
           </div>
@@ -65,7 +69,7 @@
         </div>
       </div>
       <ul v-else class="form-list">
-        <li class="form-item" v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)">
+        <li v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-item">
           <i class="fas fa-file-alt"></i> {{ template.name }}
           <div class="form-item-actions">
             <i class="fas fa-copy" @click.stop="duplicateTemplate(template.id)"></i>
@@ -82,17 +86,8 @@
 import Sidebar from './SideBar.vue';
 import { db } from '../firebaseConfig';
 
-import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 
-const forms = ref([]);
-
-onMounted(async () => {
-  const querySnapshot = await getDocs(collection(db, 'forms'));
-  querySnapshot.forEach((doc) => {
-    forms.value.push({ id: doc.id, ...doc.data() });
-  });
-});
 export default {
   components: {
     Sidebar
@@ -102,7 +97,7 @@ export default {
       forms: [],
       templates: [],
       isGridView: true,
-      isAdmin: true
+      isAdmin: true // Mettez à false si l'utilisateur n'est pas admin
     };
   },
   methods: {
@@ -220,7 +215,8 @@ export default {
   gap: 20px;
 }
 
-.form-card {
+.form-card,
+.template-card {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -232,84 +228,96 @@ export default {
   cursor: pointer;
 }
 
-.form-card:hover {
+.form-card:hover,
+.template-card:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.form-card-icon {
+.form-card-icon,
+.template-card-icon {
   font-size: 40px;
   color: #007bff;
   margin-bottom: 10px;
 }
 
-.form-card-content {
+.form-card-content,
+.template-card-content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.form-card-content h3 {
+.form-card-content h3,
+.template-card-content h3 {
   font-size: 18px;
   color: #333;
   text-align: center;
 }
 
-.form-card-actions {
+.form-card-actions,
+.template-card-actions {
+  margin-top: auto;
   display: flex;
   gap: 10px;
-  margin-top: 10px;
-}
-
-.form-card-actions i {
-  cursor: pointer;
-  font-size: 18px;
-  color: #007bff;
-  transition: color 0.3s ease;
-}
-
-.form-card-actions i:hover {
-  color: #0056b3;
-}
-
-.new-form {
-  background-color: #f1f1f1;
-  border: 2px dashed #007bff;
+  justify-content: center;
 }
 
 .form-list {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
 }
 
 .form-item {
-  padding: 15px;
-  border: 1px solid #ddd;
+  padding: 10px;
   margin-bottom: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   cursor: pointer;
 }
 
+.form-item:hover {
+  background-color: #f0f0f0;
+}
+
 .form-item i {
-  margin-right: 10px;
+  margin-right: 5px;
   color: #007bff;
 }
 
 .form-item-actions {
+  margin-left: auto;
   display: flex;
-  gap: 10px;
+  gap: 5px;
 }
 
-.form-item-actions i {
-  cursor: pointer;
-  font-size: 18px;
-  color: #007bff;
-  transition: color 0.3s ease;
+.new-form {
+  background-color: #f0f0f0;
+  border: 2px dashed #ccc;
+  color: #666;
 }
 
-.form-item-actions i:hover {
-  color: #0056b3;
+.new-form:hover {
+  border-color: #aaa;
+}
+
+.new-form .form-card-icon {
+  color: #666;
+}
+
+@media screen and (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
