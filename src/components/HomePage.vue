@@ -264,61 +264,97 @@ export default {
   justify-content: center;
 }
 
+.form-card-actions i,
+.template-card-actions i {
+  font-size: 20px;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.form-card-actions i:hover,
+.template-card-actions i:hover {
+  color: #0056b3;
+}
+
 .form-list {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
 }
 
-.form-item {
-  padding: 10px;
-  margin-bottom: 10px;
+.form-item,
+.template-item {
   background-color: #ffffff;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s;
 }
 
-.form-item:hover {
+.form-item:hover,
+.template-item:hover {
   background-color: #f0f0f0;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.form-item i {
-  margin-right: 5px;
-  color: #007bff;
+.form-item i,
+.template-item i {
+  font-size: 20px;
+  margin-right: 10px;
 }
 
-.form-item-actions {
+.form-item-actions,
+.template-item-actions {
   margin-left: auto;
   display: flex;
   gap: 5px;
 }
 
+.form-item-actions i,
+.template-item-actions i {
+  font-size: 16px;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.form-item-actions i:hover,
+.template-item-actions i:hover {
+  color: #0056b3;
+}
+
 .new-form {
   background-color: #f0f0f0;
-  border: 2px dashed #ccc;
-  color: #666;
+  border: 2px dashed #007bff;
+  color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s;
 }
 
 .new-form:hover {
-  border-color: #aaa;
+  background-color: #e0e0e0;
 }
 
-.new-form .form-card-icon {
-  color: #666;
+.new-form i {
+  font-size: 40px;
+  margin-bottom: 10px;
 }
 
-@media screen and (max-width: 768px) {
-  .form-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-  }
+.new-form h3 {
+  font-size: 16px;
+  color: #007bff;
 }
 
-@media screen and (max-width: 576px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+.new-form i:hover {
+  color: #0056b3;
 }
 </style>

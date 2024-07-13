@@ -18,18 +18,11 @@ const routes = [
     name: 'Login',
     component: LoginPage
   },
-  
   {
     path: '/home',
     name: 'Home',
     component: HomePage,
     meta: { requiresAuth: true }
-  },
-  {
-    path: '/form-preview/:id', // Chemin avec paramètre id
-    name: 'FormPreview',
-    component: FormPreview,
-    props: true
   },
   {
     path: '/form-builder',
@@ -40,14 +33,14 @@ const routes = [
   {
     path: '/form-preview/:formId',
     name: 'FormPreview',
-    component: () => import(/* webpackChunkName: "form-preview" */ '../components/FormPreview.vue'),
+    component: FormPreview,
     props: true
   },
   {
-    path: '/template/:id', // Utilisation d'un paramètre dynamique pour l'ID du template
+    path: '/template/:id',
     name: 'TemplatePreview',
     component: TemplatePreview,
-    props: true // Permet de passer des paramètres en tant que props
+    props: true
   },
   {
     path: '/admin',
@@ -78,4 +71,3 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
-
