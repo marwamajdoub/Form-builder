@@ -1,5 +1,4 @@
-// src/services/formService.js
-import { db } from '@/firebase';  // Assurez-vous que le chemin vers firebase.js est correct
+import { db } from '@/firebase';  
 import { collection, addDoc } from "firebase/firestore";
 
 export const saveForm = async (form) => {

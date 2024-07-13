@@ -85,8 +85,7 @@
 <script>
 import Sidebar from './SideBar.vue';
 import { db } from '../firebaseConfig';
-
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 
 export default {
   components: {
@@ -125,7 +124,8 @@ export default {
     deleteForm(formId) {
       const confirmed = confirm("Êtes-vous sûr de vouloir supprimer ce formulaire?");
       if (confirmed) {
-        db.collection('forms').doc(formId).delete()
+        const formRef = doc(db, 'forms', formId);
+        deleteDoc(formRef)
           .then(() => {
             console.log("Formulaire supprimé avec succès");
             // Rafraîchir la liste des formulaires après la suppression
@@ -142,7 +142,8 @@ export default {
     deleteTemplate(templateId) {
       const confirmed = confirm("Êtes-vous sûr de vouloir supprimer ce template?");
       if (confirmed) {
-        db.collection('templates').doc(templateId).delete()
+        const templateRef = doc(db, 'templates', templateId);
+        deleteDoc(templateRef)
           .then(() => {
             console.log("Template supprimé avec succès");
             // Rafraîchir la liste des templates après la suppression

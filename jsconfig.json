@@ -13,7 +13,8 @@
       "esnext",
       "dom",
       "dom.iterable",
-      "scripthost"
+      "scripthost"npm run serve
+      
     ]
   }
 }
