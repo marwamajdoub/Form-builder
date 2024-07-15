@@ -6,7 +6,7 @@
         <button @click="toggleViewMode(true)" :class="{ active: isGridView }">Grille</button>
         <button @click="toggleViewMode(false)" :class="{ active: !isGridView }">Liste</button>
       </div>
-      
+
       <!-- Formulaires -->
       <h2>Vos formulaires</h2>
       <div v-if="isGridView" class="form-grid">
@@ -16,6 +16,10 @@
           </div>
           <div class="form-card-content">
             <h3>{{ form.name }}</h3>
+            <p>{{ form.description }}</p>
+            <ul>
+              <li v-for="question in form.questions" :key="question.id">{{ question.text }}</li>
+            </ul>
             <div class="form-card-actions">
               <i class="fas fa-copy" @click.stop="duplicateForm(form.id)"></i>
               <i class="fas fa-trash" @click.stop="deleteForm(form.id)"></i>
@@ -42,7 +46,7 @@
           </div>
         </li>
       </ul>
-      
+
       <!-- Templates -->
       <h2>Templates</h2>
       <div v-if="isGridView" class="form-grid">
@@ -158,13 +162,16 @@ export default {
       console.log(`Share template ${templateId}`);
     },
     async fetchForms() {
-      const formsCollection = collection(db, 'forms');
-      const querySnapshot = await getDocs(formsCollection);
-      this.forms = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const querySnapshot = await getDocs(collection(db, 'forms'));
+      this.forms = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        description: doc.data().description || '',
+        questions: doc.data().questions || []
+      }));
     },
     async fetchTemplates() {
-      const templatesCollection = collection(db, 'templates');
-      const querySnapshot = await getDocs(templatesCollection);
+      const querySnapshot = await getDocs(collection(db, 'templates'));
       this.templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
   },
@@ -174,6 +181,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 /* Styles spécifiques pour HomePage */

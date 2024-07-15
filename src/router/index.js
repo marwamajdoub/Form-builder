@@ -25,16 +25,16 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/form-preview/:id',
+    name: 'FormPreview',
+    component: FormPreview,
+    props: true
+  },
+  {
     path: '/form-builder',
     name: 'FormBuilder',
     component: FormBuilder,
     meta: { requiresAuth: true }
-  },
-  {
-    path: '/form-preview/:formId',
-    name: 'FormPreview',
-    component: FormPreview,
-    props: true
   },
   {
     path: '/template/:id',
