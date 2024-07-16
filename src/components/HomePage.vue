@@ -53,13 +53,16 @@
         <div v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-card template-card">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
+
           </div>
+
           <div class="form-card-content">
             <h3>{{ template.name }}</h3>
             <div class="form-card-actions">
               <i class="fas fa-copy" @click.stop="duplicateTemplate(template.id)"></i>
               <i class="fas fa-trash" @click.stop="deleteTemplate(template.id)"></i>
               <i class="fas fa-share" @click.stop="shareTemplate(template.id)"></i>
+
             </div>
           </div>
         </div>
@@ -95,6 +98,7 @@ export default {
   components: {
     Sidebar
   },
+
   data() {
     return {
       forms: [],
@@ -122,6 +126,9 @@ export default {
     shareForm(formId) {
       console.log(`Share form ${formId}`);
     },
+    getCoverImage(cover) {
+       return `/assets/${cover}`;
+      },
     duplicateForm(formId) {
       console.log(`Duplicate form ${formId}`);
     },
@@ -235,12 +242,15 @@ export default {
   align-items: center;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  
 }
+
 
 .form-card:hover,
 .template-card:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  
 }
 
 .form-card-icon,
@@ -314,6 +324,10 @@ export default {
 .template-item i {
   font-size: 20px;
   margin-right: 10px;
+}
+.template-item{
+   background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,69,0.891281512605042) 26%, rgba(4,113,164,1) 64%, rgba(4,118,169,1) 66%, rgba(4,129,179,1) 70%, rgba(2,165,212,1) 83%, rgba(0,212,255,1) 100%);
+
 }
 
 .form-item-actions,
