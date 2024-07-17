@@ -66,14 +66,7 @@
             </div>
           </div>
         </div>
-        <div class="form-card new-form" @click="goToTemplateBuilder">
-          <div class="form-card-icon">
-            <i class="fas fa-plus"></i>
-          </div>
-          <div class="form-card-content">
-            <h3>Ajouter template</h3>
-          </div>
-        </div>
+        
       </div>
       <ul v-else class="form-list">
         <li v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-item">
@@ -379,4 +372,7 @@ export default {
 .new-form i:hover {
   color: #0056b3;
 }
+ .fa-file-alt{
+  color:#0056b3;
+ }
 </style>
