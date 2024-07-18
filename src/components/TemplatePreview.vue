@@ -10,7 +10,7 @@
         <span v-if="!question.editing" @click="startEditing(question)">{{ question.text }}</span>
         <input v-else type="text" v-model="question.text" @keydown.enter="saveEditing(question)" class="edit-input" />
         <span class="response-type">{{ getResponseType(question.type) }}</span>
-      </label> <!-- Display the question and response type -->
+      </label>
 
       <!-- Render different field types -->
       <template v-if="question.type === 'text-input'">
@@ -54,8 +54,8 @@
       </template>
     </div>
 
-    <!-- Bouton Enregistrer -->
-    <button @click="saveToForms" class="save-button">Enregistrer dans vos formulaires</button>
+    <!-- Add save button -->
+    <button @click="saveTemplate" class="save-button">Enregistrer</button>
   </div>
   <div v-else>
     <p>Chargement du template...</p>
@@ -64,7 +64,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 export default {
@@ -102,7 +102,6 @@ export default {
       }
     });
 
-    // Fonction pour obtenir le type de réponse
     const getResponseType = (type) => {
       switch (type) {
         case 'text-input':
@@ -126,21 +125,28 @@ export default {
       }
     };
 
-    // Fonction pour démarrer l'édition d'une question
     const startEditing = (question) => {
       question.editing = true;
     };
 
-    // Fonction pour sauvegarder les modifications d'une question
     const saveEditing = (question) => {
       question.editing = false;
       // Ici, vous pouvez ajouter du code pour sauvegarder la modification dans Firebase
     };
 
-    // Fonction pour enregistrer le template dans vos formulaires
-    const saveToForms = () => {
-      // Ici, vous pouvez ajouter le code pour enregistrer le template dans vos formulaires
-      console.log('Template enregistré dans vos formulaires :', template.value);
+    const saveTemplate = async () => {
+      try {
+        const newForm = {
+          ...template.value,
+          createdAt: new Date()
+        };
+        const formRef = doc(collection(db, 'forms'));
+        await setDoc(formRef, newForm);
+        alert('Template enregistré avec succès !');
+      } catch (error) {
+        console.error('Erreur lors de l\'enregistrement du template :', error);
+        alert('Erreur lors de l\'enregistrement du template.');
+      }
     };
 
     return {
@@ -148,7 +154,7 @@ export default {
       getResponseType,
       startEditing,
       saveEditing,
-      saveToForms
+      saveTemplate
     };
   }
 };
@@ -198,7 +204,7 @@ export default {
   margin-bottom: 8px;
   color: #333;
   font-size: 1.1em;
-  cursor: pointer; /* Ajout pour indiquer que le texte est cliquable */
+  cursor: pointer;
 }
 
 .form-field .edit-input {
@@ -271,15 +277,18 @@ export default {
 
 .save-button {
   display: block;
-  margin: 20px auto;
-  padding: 12px 24px;
+  width: 100%;
+  padding: 14px;
   background-color: #007bff;
   color: #fff;
+  font-size: 1.2em;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1em;
   transition: background-color 0.3s ease;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .save-button:hover {
