@@ -8,105 +8,187 @@
     </div>
 
     <div class="form-container">
-      <div class="form-header">
-        <input class="form-title" type="text" v-model="formTitle" placeholder="Formulaire sans titre" />
-        <textarea class="form-description" v-model="formDescription" placeholder="Description du formulaire"></textarea>
-      </div>
-
-      <div class="form-body">
-        <div v-for="(field, index) in formFields" :key="index" class="form-field">
-          <input type="text" v-model="field.question" placeholder="Question sans titre" class="field-question" />
-          
-          <select v-model="field.type" class="field-type-select">
-            <option value="text">Réponse courte</option>
-            <option value="textarea">Paragraphe</option>
-            <option value="radio">Choix multiples</option>
-            <!-- Ajoutez d'autres types de champs si nécessaire -->
-          </select>
-
-          <div v-if="field.type === 'text'">
-            <input type="text" placeholder="Réponse courte" class="field-input" />
-          </div>
-          <div v-else-if="field.type === 'textarea'">
-            <textarea placeholder="Paragraphe" class="field-input"></textarea>
-          </div>
-          <div v-else-if="field.type === 'radio'">
-            <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
-              <input type="radio" :name="'option-' + index" :id="'option-' + index + '-' + optIndex" />
-              <label :for="'option-' + index + '-' + optIndex">{{ option }}</label>
-            </div>
-            <button @click.prevent="addOption(field)" class="add-option-btn">Ajouter une option</button>
-          </div>
-          <!-- Ajoutez d'autres types de champs si nécessaire -->
+      <div v-if="!isPreviewMode">
+        <!-- Mode Édition -->
+        <div class="form-header">
+          <input class="form-title" type="text" v-model="formTitle" placeholder="Formulaire sans titre" />
+          <textarea class="form-description" v-model="formDescription" placeholder="Description du formulaire"></textarea>
         </div>
-        
-        <button @click="addQuestion" class="add-question-btn"><i class="fas fa-plus"></i> </button>
+
+        <div class="form-body">
+          <div v-for="(field, index) in formFields" :key="index" class="form-field">
+            <input type="text" v-model="field.question" placeholder="Question sans titre" class="field-question" />
+
+            <select v-model="field.type" class="field-type-select">
+              <option value="text">Réponse courte</option>
+              <option value="textarea">Paragraphe</option>
+              <option value="radio">Choix multiples</option>
+              <option value="checkbox">Cases à cocher</option>
+              <option value="dropdown">Liste déroulante</option>
+              <option value="date">Date</option>
+            </select>
+
+            <!-- Champs de formulaire selon le type -->
+            <div v-if="field.type === 'text'">
+              <input type="text" placeholder="Réponse courte" class="field-input" />
+            </div>
+            <div v-else-if="field.type === 'textarea'">
+              <textarea placeholder="Paragraphe" class="field-input"></textarea>
+            </div>
+            <div v-else-if="field.type === 'radio'">
+              <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+                <input type="radio" :name="'option-' + index" :id="'option-' + index + '-' + optIndex" />
+                <label :for="'option-' + index + '-' + optIndex">{{ option }}</label>
+              </div>
+              <button @click.prevent="addOption(field)" class="add-option-btn">Ajouter une option</button>
+            </div>
+            <div v-else-if="field.type === 'checkbox'">
+              <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+                <input type="checkbox" :id="'checkbox-' + index + '-' + optIndex" />
+                <label :for="'checkbox-' + index + '-' + optIndex">{{ option }}</label>
+              </div>
+              <button @click.prevent="addOption(field)" class="add-option-btn">Ajouter une option</button>
+            </div>
+            <div v-else-if="field.type === 'dropdown'">
+              <select class="field-input">
+                <option v-for="(option, optIndex) in field.options" :key="optIndex">{{ option }}</option>
+              </select>
+              <button @click.prevent="addOption(field)" class="add-option-btn">Ajouter une option</button>
+            </div>
+            <div v-else-if="field.type === 'date'">
+              <input type="date" class="field-input" />
+            </div>
+          </div>
+
+          <button @click="addQuestion" class="add-question-btn"><i class="fas fa-plus"></i> </button>
+        </div>
+
+        <div class="form-actions">
+          <button class="action-btn preview-btn" @click="togglePreviewMode">
+            <i class="fas fa-eye"></i> 
+          </button>
+          <button class="action-btn save-btn" @click="saveForm">
+            <i class="fas fa-save"></i> 
+          </button>
+        </div>
       </div>
 
-      <div class="form-actions">
-        <button class="action-btn preview-btn" @click="togglePreviewMode">
-          <i class="fas fa-eye"></i>
-        </button>
-        <button class="action-btn save-btn" @click="saveForm">
-          <i class="fas fa-save"></i>
-        </button>
+      <div v-else>
+        <!-- Mode Prévisualisation -->
+        <div class="form-preview">
+          <h1>{{ formTitle }}</h1>
+          <p>{{ formDescription }}</p>
+          <div v-for="(field, index) in formFields" :key="index" class="form-preview-field">
+            <div v-if="field.type === 'text'">
+              <label>{{ field.question }}</label>
+              <input type="text" placeholder="Réponse courte" />
+            </div>
+            <div v-else-if="field.type === 'textarea'">
+              <label>{{ field.question }}</label>
+              <textarea placeholder="Paragraphe"></textarea>
+            </div>
+            <div v-else-if="field.type === 'radio'">
+              <label>{{ field.question }}</label>
+              <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+                <input type="radio" :name="'option-' + index" :id="'option-' + index + '-' + optIndex" />
+                <label :for="'option-' + index + '-' + optIndex">{{ option }}</label>
+              </div>
+            </div>
+            <div v-else-if="field.type === 'checkbox'">
+              <label>{{ field.question }}</label>
+              <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+                <input type="checkbox" :id="'checkbox-' + index + '-' + optIndex" />
+                <label :for="'checkbox-' + index + '-' + optIndex">{{ option }}</label>
+              </div>
+            </div>
+            <div v-else-if="field.type === 'dropdown'">
+              <label>{{ field.question }}</label>
+              <select>
+                <option v-for="(option, optIndex) in field.options" :key="optIndex">{{ option }}</option>
+              </select>
+            </div>
+            <div v-else-if="field.type === 'date'">
+              <label>{{ field.question }}</label>
+              <input type="date" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="action-btn preview-btn" @click="togglePreviewMode">
+            <i class="fas fa-edit"></i> Éditer
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script>
+import { db } from '@/firebaseConfig';
+import { collection, addDoc } from 'firebase/firestore';
+
 export default {
   data() {
     return {
       formTitle: '',
       formDescription: '',
       formFields: [],
+      isPreviewMode: false, // Ajoutez une propriété pour le mode prévisualisation
       formElements: [
-        { label: 'Réponse courte', icon: 'fas fa-font', type: 'text' },
+        { label: 'Texte', icon: 'fas fa-font', type: 'text' },
         { label: 'Paragraphe', icon: 'fas fa-align-left', type: 'textarea' },
-        { label: 'Choix multiples', icon: 'fas fa-dot-circle', type: 'radio' },
-        // Ajoutez d'autres éléments si nécessaire
-      ],
-      previewMode: false,
+        { label: 'Choix multiples', icon: 'fas fa-list-ul', type: 'radio' },
+        { label: 'Cases à cocher', icon: 'fas fa-check-square', type: 'checkbox' },
+        { label: 'Liste déroulante', icon: 'fas fa-caret-down', type: 'dropdown' },
+        { label: 'Date', icon: 'fas fa-calendar-alt', type: 'date' }
+      ]
     };
   },
   methods: {
+    addElementToForm(element) {
+      this.formFields.push({
+        question: '',
+        type: element.type,
+        options: element.type === 'radio' || element.type === 'checkbox' || element.type === 'dropdown' ? ['Option 1'] : []
+      });
+    },
     addQuestion() {
       this.formFields.push({
-        type: 'text',
         question: '',
-        options: [], // Utilisé uniquement pour les types de champs 'radio'
+        type: 'text',
+        options: []
       });
     },
     addOption(field) {
-      if (field.type === 'radio') {
-        field.options.push(`Option ${field.options.length + 1}`);
-      }
+      field.options.push('Nouvelle option');
     },
     togglePreviewMode() {
-      this.previewMode = !this.previewMode;
+      this.isPreviewMode = !this.isPreviewMode; // Bascule entre les modes
     },
     saveForm() {
-      // Ajoutez votre logique de sauvegarde du formulaire ici
-      console.log({
-        title: this.formTitle,
-        description: this.formDescription,
-        fields: this.formFields,
-      });
-    },
-    addElementToForm(element) {
-      const newField = {
-        type: element.type,
-        question: '',
-        options: element.type === 'radio' ? ['Option 1'] : [],
-      };
-      this.formFields.push(newField);
+      // Implémentez la méthode pour sauvegarder le formulaire
     }
   },
+  async saveForm() {
+      try {
+        const docRef = await addDoc(collection(db, 'forms'), {
+          title: this.formTitle,
+          description: this.formDescription,
+          fields: this.formFields
+        });
+        console.log('Formulaire enregistré avec ID:', docRef.id);
+        this.$router.push('/home'); // Redirige vers la page d'accueil après l'enregistrement
+      } catch (e) {
+        console.error('Erreur lors de l\'enregistrement du formulaire:', e);
+      }
+    }
+  
+
 };
 </script>
+
+
 
 
 <style>
@@ -130,8 +212,13 @@ export default {
   align-items: center;
   position: fixed;
   left: 20px;
-  top: 20px;
+  top: 80px; /* Ajuster cette valeur pour décaler la sidebar vers le bas */
+  /* Si nécessaire, ajouter une marge pour ne pas couvrir le contenu */
+  z-index: 1000;
+  top: 60px; /* S'assurer que la sidebar est au-dessus des autres éléments */
+  left: 180px;
 }
+
 
 .sidebar-item {
   margin-bottom: 20px;
@@ -301,4 +388,65 @@ export default {
 .preview-btn i, .save-btn i {
   margin-right: 8px;
 }
+.form-preview {
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.form-preview h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-preview p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.form-preview-field {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #fafafa;
+}
+
+.form-preview-field label {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.form-preview-field input[type="text"],
+.form-preview-field textarea,
+.form-preview-field select {
+  width: calc(100% - 16px); /* Ensure full width with padding adjustment */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 16px;
+  color: #333;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-preview-field input[type="text"]:focus,
+.form-preview-field textarea:focus,
+.form-preview-field select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
 </style>

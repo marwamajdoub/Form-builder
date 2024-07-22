@@ -1,147 +1,67 @@
-
-
 <template>
   <div class="form-preview">
-    <h2>Aperçu du formulaire</h2>
-    <div v-for="(field, index) in formFields" :key="index" class="preview-field">
-      <label>{{ field.question }}</label>
-      <template v-if="field.type === 'text-input'">
-        <input type="text" :placeholder="field.props.placeholder" />
-      </template>
-      <template v-else-if="field.type === 'paragraph-input'">
-        <textarea :placeholder="field.props.placeholder"></textarea>
-      </template>
-      <template v-else-if="field.type === 'checkbox-group'">
-        <div v-for="(option, optIndex) in field.props.options" :key="optIndex">
-          <input type="checkbox" />
-          <label>{{ option }}</label>
+    <h1>{{ form.title }}</h1>
+    <p>{{ form.description }}</p>
+    <div v-for="(field, index) in form.fields" :key="index" class="form-preview-field">
+      <div v-if="field.type === 'text'">
+        <label>{{ field.question }}</label>
+        <input type="text" placeholder="Réponse courte" disabled />
+      </div>
+      <div v-else-if="field.type === 'textarea'">
+        <label>{{ field.question }}</label>
+        <textarea placeholder="Paragraphe" disabled></textarea>
+      </div>
+      <div v-else-if="field.type === 'radio'">
+        <label>{{ field.question }}</label>
+        <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+          <input type="radio" :name="'option-' + index" :id="'option-' + index + '-' + optIndex" disabled />
+          <label :for="'option-' + index + '-' + optIndex">{{ option }}</label>
         </div>
-      </template>
-      <template v-else-if="field.type === 'radio-group'">
-        <div v-for="(option, optIndex) in field.props.options" :key="optIndex">
-          <input type="radio" :name="'radio-' + index" />
-          <label>{{ option }}</label>
+      </div>
+      <div v-else-if="field.type === 'checkbox'">
+        <label>{{ field.question }}</label>
+        <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+          <input type="checkbox" :id="'checkbox-' + index + '-' + optIndex" disabled />
+          <label :for="'checkbox-' + index + '-' + optIndex">{{ option }}</label>
         </div>
-      </template>
-      <template v-else-if="field.type === 'dropdown'">
-        <select>
-          <option v-for="(option, optIndex) in field.props.options" :key="optIndex">{{ option }}</option>
+      </div>
+      <div v-else-if="field.type === 'dropdown'">
+        <label>{{ field.question }}</label>
+        <select disabled>
+          <option v-for="(option, optIndex) in field.options" :key="optIndex">{{ option }}</option>
         </select>
-      </template>
-      <template v-else-if="field.type === 'date-picker'">
-        <input type="date" />
-      </template>
-      <template v-else-if="field.type === 'time-picker'">
-        <input type="time" />
-      </template>
-      <template v-else-if="field.type === 'file-upload'">
-        <input type="file" />
-      </template>
+      </div>
+      <div v-else-if="field.type === 'date'">
+        <label>{{ field.question }}</label>
+        <input type="date" disabled />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'FormPreview',
+import { db } from '@/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
-  props: {
-    formFields: {
-      type: Array,
-      required: true
+export default {
+  data() {
+    return {
+      form: {}
+    };
+  },
+  async created() {
+    const formId = this.$route.params.id;
+    try {
+      const docRef = doc(db, 'forms', formId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        this.form = docSnap.data();
+      } else {
+        console.error('Formulaire non trouvé');
+      }
+    } catch (e) {
+      console.error('Erreur lors de la récupération du formulaire:', e);
     }
   }
 };
 </script>
-
-  <style scoped>
-  .form-preview {
-    font-family: 'Montserrat', sans-serif;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    margin: 40px auto;
-  }
-  
-  .form-preview h2 {
-    color: #007bff;
-    font-size: 2em;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .form-preview p {
-    color: #1a5276;
-    font-size: 1.2em;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .form-field {
-    margin-bottom: 20px;
-  }
-  
-  .form-field label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .form-field input[type="text"],
-  .form-field textarea,
-  .form-field select,
-  .form-field input[type="date"],
-  .form-field input[type="time"],
-  .form-field input[type="file"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-  }
-  
-  .form-field input[type="text"]:focus,
-  .form-field textarea:focus,
-  .form-field select:focus,
-  .form-field input[type="date"]:focus,
-  .form-field input[type="time"]:focus,
-  .form-field input[type="file"]:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
-  }
-  
-  .checkbox-option,
-  .radio-option {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .checkbox-option input,
-  .radio-option input {
-    margin-right: 10px;
-  }
-  
-  .checkbox-option label,
-  .radio-option label {
-    color: #555;
-  }
-  
-  .form-field select {
-    background-color: #fff;
-  }
-  
-  .form-field textarea {
-    resize: vertical;
-  }
-  
-  .form-field input[type="file"] {
-    padding: 8px;
-  }
-  </style>
-  
