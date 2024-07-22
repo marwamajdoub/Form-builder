@@ -5,6 +5,7 @@ import FormBuilder from '../components/FormBuilder.vue';
 import TemplatePreview from '../components/TemplatePreview.vue';
 import LoginPage from '../components/LoginPage.vue';
 import AdminPage from '../components/AdminPage.vue';
+import ShareForm from '../components/ShareForm.vue'; // Importer le composant ShareForm
 import { auth } from '../firebaseConfig';
 import store from '../store';
 
@@ -47,8 +48,15 @@ const routes = [
     name: 'Admin',
     component: AdminPage,
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/share-form/:id',
+    name: 'ShareForm',
+    component: ShareForm,
+    props: true
   }
 ];
+
 
 const router = createRouter({
   history: createWebHistory(),

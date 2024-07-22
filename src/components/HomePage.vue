@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <Sidebar :isAdmin="isAdmin" />
+    <Sidebar :isAdmin="isAdmin" @navigate="handleNavigation" />
     <div class="content">
       <div class="view-mode-buttons">
         <button @click="toggleViewMode(true)" :class="{ active: isGridView }">Grille</button>
@@ -8,8 +8,8 @@
       </div>
 
       <!-- Formulaires -->
-      <h2>Vos formulaires</h2>
-      <div v-if="isGridView" class="form-grid">
+      <h2 v-if="view === 'AllForms'">Vos formulaires</h2>
+      <div v-if="isGridView && view === 'AllForms'" class="form-grid">
         <div v-for="form in forms" :key="form.id" @click="previewForm(form.id)" class="form-card">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <ul v-else class="form-list">
+      <ul v-else-if="view === 'AllForms'" class="form-list">
         <li v-for="form in forms" :key="form.id" @click="previewForm(form.id)" class="form-item">
           <i class="fas fa-file-alt"></i> {{ form.name }}
           <div class="form-item-actions">
@@ -48,8 +48,8 @@
       </ul>
 
       <!-- Templates -->
-      <h2>Templates</h2>
-      <div v-if="isGridView" class="form-grid">
+      <h2 v-if="view === 'Templates'">Templates</h2>
+      <div v-if="isGridView && view === 'Templates'" class="form-grid">
         <div v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-card template-card">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
@@ -64,7 +64,7 @@
           </div>
         </div>
       </div>
-      <ul v-else class="form-list">
+      <ul v-else-if="view === 'Templates'" class="form-list">
         <li v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-item">
           <i class="fas fa-file-alt"></i> {{ template.name }}
           <div class="form-item-actions">
@@ -93,18 +93,19 @@ export default {
       forms: [],
       templates: [],
       isGridView: true,
-      isAdmin: true // Mettez à false si l'utilisateur n'est pas admin
+      isAdmin: true, // Mettez à false si l'utilisateur n'est pas admin
+      view: 'AllForms' // Ajout d'un état de vue pour gérer la navigation
     };
   },
   methods: {
+    handleNavigation(view) {
+      this.view = view;
+    },
     toggleViewMode(isGrid) {
       this.isGridView = isGrid;
     },
     goToFormBuilder() {
       this.$router.push({ name: 'FormBuilder' });
-    },
-    goToTemplateBuilder() {
-      this.$router.push({ name: 'TemplateBuilder' });
     },
     previewForm(formId) {
       this.$router.push({ name: 'FormPreview', params: { id: formId } });
@@ -114,9 +115,6 @@ export default {
     },
     shareForm(formId) {
       console.log(`Share form ${formId}`);
-    },
-    getCoverImage(cover) {
-      return `/assets/${cover}`;
     },
     duplicateForm(formId) {
       console.log(`Duplicate form ${formId}`);
@@ -136,39 +134,52 @@ export default {
           });
       }
     },
+    shareTemplate(templateId) {
+      console.log(`Share template ${templateId}`);
+    },
     duplicateTemplate(templateId) {
       console.log(`Duplicate template ${templateId}`);
     },
     deleteTemplate(templateId) {
-      const confirmed = confirm("Êtes-vous sûr de vouloir supprimer ce template?");
+      const confirmed = confirm("Êtes-vous sûr de vouloir supprimer cette template?");
       if (confirmed) {
         const templateRef = doc(db, 'templates', templateId);
         deleteDoc(templateRef)
           .then(() => {
-            console.log("Template supprimé avec succès");
+            console.log("Template supprimée avec succès");
             // Rafraîchir la liste des templates après la suppression
             this.fetchTemplates();
           })
           .catch(error => {
-            console.error("Erreur lors de la suppression du template:", error);
+            console.error("Erreur lors de la suppression de la template:", error);
           });
       }
     },
-    shareTemplate(templateId) {
-      console.log(`Share template ${templateId}`);
+    fetchForms() {
+      const formsCollection = collection(db, 'forms');
+      getDocs(formsCollection)
+        .then(querySnapshot => {
+          this.forms = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+        })
+        .catch(error => {
+          console.error("Erreur lors de la récupération des formulaires:", error);
+        });
     },
-    async fetchForms() {
-      const querySnapshot = await getDocs(collection(db, 'forms'));
-      this.forms = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        description: doc.data().description || '',
-        questions: doc.data().questions || []
-      }));
-    },
-    async fetchTemplates() {
-      const querySnapshot = await getDocs(collection(db, 'templates'));
-      this.templates = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    fetchTemplates() {
+      const templatesCollection = collection(db, 'templates');
+      getDocs(templatesCollection)
+        .then(querySnapshot => {
+          this.templates = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+        })
+        .catch(error => {
+          console.error("Erreur lors de la récupération des templates:", error);
+        });
     }
   },
   created() {
@@ -215,126 +226,73 @@ export default {
 }
 
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
 }
 
 .form-card,
 .template-card {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 5px;
   cursor: pointer;
+  width: calc(33.33% - 20px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
 }
 
 .form-card:hover,
 .template-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-.form-card-icon,
-.template-card-icon {
-  font-size: 40px;
+.form-card-icon {
+  font-size: 50px;
   color: #007bff;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-.form-card-content,
-.template-card-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.form-card-content h3,
-.template-card-content h3 {
-  font-size: 18px;
-  color: #333;
-  text-align: center;
+.form-card-content h3 {
+  margin: 0 0 10px;
 }
 
 .form-card-actions,
-.template-card-actions {
-  margin-top: auto;
+.form-item-actions {
   display: flex;
   gap: 10px;
-  justify-content: center;
 }
 
-.form-card-actions i,
-.template-card-actions i {
-  font-size: 20px;
-  color: #007bff;
+.form-item-actions i,
+.form-card-actions i {
   cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s ease;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.form-item-actions i:hover,
+.form-card-actions i:hover {
+  color: #0056b3;
 }
 
 .form-list {
+  list-style: none;
   padding: 0;
 }
 
 .form-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  cursor: pointer;
-  background-color: #ffffff;
+  padding: 15px;
+  background-color: #f8f9fa;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
 }
 
 .form-item:hover {
-  transform: scale(1.01);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.form-item i {
-  margin-right: 10px;
-}
-
-.form-item-actions {
-  margin-left: auto;
-}
-
-.new-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.new-form:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-
-.new-form .form-card-icon {
-  font-size: 40px;
-  color: #007bff;
-}
-
-.new-form h3 {
-  margin-top: 10px;
-  font-size: 18px;
-  color: #333;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 </style>

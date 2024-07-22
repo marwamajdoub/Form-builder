@@ -166,29 +166,23 @@ export default {
     togglePreviewMode() {
       this.isPreviewMode = !this.isPreviewMode; // Bascule entre les modes
     },
-    saveForm() {
-      // Implémentez la méthode pour sauvegarder le formulaire
-    }
-  },
-  async saveForm() {
+    async saveForm() {
+      const formData = {
+        title: this.formTitle,
+        description: this.formDescription,
+        fields: this.formFields,
+      };
       try {
-        const docRef = await addDoc(collection(db, 'forms'), {
-          title: this.formTitle,
-          description: this.formDescription,
-          fields: this.formFields
-        });
-        console.log('Formulaire enregistré avec ID:', docRef.id);
+        await addDoc(collection(db, 'forms'), formData);
         this.$router.push('/home'); // Redirige vers la page d'accueil après l'enregistrement
       } catch (e) {
-        console.error('Erreur lors de l\'enregistrement du formulaire:', e);
+        console.error('Error adding document: ', e);
       }
-    }
+    },
+  },
   
-
 };
 </script>
-
-
 
 
 <style>
