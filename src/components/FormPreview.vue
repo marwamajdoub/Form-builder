@@ -1,80 +1,59 @@
-<template>
-    <div class="form-preview">
-      <!-- Display form title and description -->
-      <h2>{{ formTitle }}</h2>
-      <p>{{ formDescription }}</p>
-      
-      <!-- Display form fields dynamically -->
-      <div v-for="(field, index) in formFields" :key="index" class="form-field">
-        <label>{{ field.question }}</label> <!-- Display the question -->
-        
-        <!-- Render different field types -->
-        <template v-if="field.type === 'text-input'">
-          <input type="text" :placeholder="field.props.placeholder" />
-        </template>
-        
-        <template v-else-if="field.type === 'paragraph-input'">
-          <textarea :placeholder="field.props.placeholder"></textarea>
-        </template>
-        
-        <template v-else-if="field.type === 'checkbox-group'">
-          <div v-for="(option, optIndex) in field.props.options" :key="optIndex" class="checkbox-option">
-            <input type="checkbox" :id="'option-' + optIndex" />
-            <label :for="'option-' + optIndex">{{ option }}</label>
-          </div>
-        </template>
-        
-        <template v-else-if="field.type === 'radio-group'">
-          <div v-for="(option, optIndex) in field.props.options" :key="optIndex" class="radio-option">
-            <input type="radio" :id="'option-' + optIndex" :name="'radio-' + index" />
-            <label :for="'option-' + optIndex">{{ option }}</label>
-          </div>
-        </template>
-        
-        <template v-else-if="field.type === 'dropdown'">
-          <select>
-            <option v-for="(option, optIndex) in field.props.options" :key="optIndex">{{ option }}</option>
-          </select>
-        </template>
-        
-        <template v-else-if="field.type === 'date-picker'">
-          <input type="date" />
-        </template>
-        
-        <template v-else-if="field.type === 'time-picker'">
-          <input type="time" />
-        </template>
-        
-        <template v-else-if="field.type === 'file-upload'">
-          <input type="file" />
-        </template>
-      </div>
-    </div>
-  </template>
-  
-  <script>
 
-  export default {
-    name: 'FormPreview',
-    props: {
-      formTitle: String,
-      formDescription: String,
-      formFields: Array
-    },
-    previewForm(formId) {
-      if (formId) {
-        this.$router.push({ name: 'FormPreview', params: { id: formId } });
-      } else {
-        console.error('Missing formId');
-      }
-    },
-    deleteForm(formId) {
-      // Implement your delete logic here
-      console.log('Deleting form with id:', formId);
+
+<template>
+  <div class="form-preview">
+    <h2>Aperçu du formulaire</h2>
+    <div v-for="(field, index) in formFields" :key="index" class="preview-field">
+      <label>{{ field.question }}</label>
+      <template v-if="field.type === 'text-input'">
+        <input type="text" :placeholder="field.props.placeholder" />
+      </template>
+      <template v-else-if="field.type === 'paragraph-input'">
+        <textarea :placeholder="field.props.placeholder"></textarea>
+      </template>
+      <template v-else-if="field.type === 'checkbox-group'">
+        <div v-for="(option, optIndex) in field.props.options" :key="optIndex">
+          <input type="checkbox" />
+          <label>{{ option }}</label>
+        </div>
+      </template>
+      <template v-else-if="field.type === 'radio-group'">
+        <div v-for="(option, optIndex) in field.props.options" :key="optIndex">
+          <input type="radio" :name="'radio-' + index" />
+          <label>{{ option }}</label>
+        </div>
+      </template>
+      <template v-else-if="field.type === 'dropdown'">
+        <select>
+          <option v-for="(option, optIndex) in field.props.options" :key="optIndex">{{ option }}</option>
+        </select>
+      </template>
+      <template v-else-if="field.type === 'date-picker'">
+        <input type="date" />
+      </template>
+      <template v-else-if="field.type === 'time-picker'">
+        <input type="time" />
+      </template>
+      <template v-else-if="field.type === 'file-upload'">
+        <input type="file" />
+      </template>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'FormPreview',
+
+  props: {
+    formFields: {
+      type: Array,
+      required: true
     }
-  };
-  
-  </script>  
+  }
+};
+</script>
+
   <style scoped>
   .form-preview {
     font-family: 'Montserrat', sans-serif;

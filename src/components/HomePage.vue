@@ -53,20 +53,16 @@
         <div v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-card template-card">
           <div class="form-card-icon">
             <i class="fas fa-file-alt"></i>
-
           </div>
-
           <div class="form-card-content">
             <h3>{{ template.name }}</h3>
             <div class="form-card-actions">
               <i class="fas fa-copy" @click.stop="duplicateTemplate(template.id)"></i>
               <i class="fas fa-trash" @click.stop="deleteTemplate(template.id)"></i>
               <i class="fas fa-share" @click.stop="shareTemplate(template.id)"></i>
-
             </div>
           </div>
         </div>
-        
       </div>
       <ul v-else class="form-list">
         <li v-for="template in templates" :key="template.id" @click="previewTemplate(template.id)" class="form-item">
@@ -120,8 +116,8 @@ export default {
       console.log(`Share form ${formId}`);
     },
     getCoverImage(cover) {
-       return `/assets/${cover}`;
-      },
+      return `/assets/${cover}`;
+    },
     duplicateForm(formId) {
       console.log(`Duplicate form ${formId}`);
     },
@@ -235,15 +231,12 @@ export default {
   align-items: center;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
-  
 }
-
 
 .form-card:hover,
 .template-card:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  
 }
 
 .form-card-icon,
@@ -280,99 +273,68 @@ export default {
   font-size: 20px;
   color: #007bff;
   cursor: pointer;
-  transition: color 0.3s ease;
 }
 
-.form-card-actions i:hover,
-.template-card-actions i:hover {
-  color: #0056b3;
-}
-
-.form-list {
-  list-style: none;
+ul {
+  list-style-type: none;
   padding: 0;
 }
 
-.form-item,
-.template-item {
+.form-list {
+  padding: 0;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
   background-color: #ffffff;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.form-item:hover,
-.template-item:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.form-item:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.form-item i,
-.template-item i {
-  font-size: 20px;
+.form-item i {
   margin-right: 10px;
 }
-.template-item{
-   background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,69,0.891281512605042) 26%, rgba(4,113,164,1) 64%, rgba(4,118,169,1) 66%, rgba(4,129,179,1) 70%, rgba(2,165,212,1) 83%, rgba(0,212,255,1) 100%);
 
-}
-
-.form-item-actions,
-.template-item-actions {
+.form-item-actions {
   margin-left: auto;
-  display: flex;
-  gap: 5px;
-}
-
-.form-item-actions i,
-.template-item-actions i {
-  font-size: 16px;
-  color: #007bff;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.form-item-actions i:hover,
-.template-item-actions i:hover {
-  color: #0056b3;
 }
 
 .new-form {
-  background-color: #f0f0f0;
-  border: 2px dashed #007bff;
-  color: #007bff;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .new-form:hover {
-  background-color: #e0e0e0;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.new-form i {
+.new-form .form-card-icon {
   font-size: 40px;
-  margin-bottom: 10px;
-}
-
-.new-form h3 {
-  font-size: 16px;
   color: #007bff;
 }
 
-.new-form i:hover {
-  color: #0056b3;
+.new-form h3 {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #333;
 }
- .fa-file-alt{
-  color:#0056b3;
- }
 </style>

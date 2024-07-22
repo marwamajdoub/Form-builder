@@ -1,605 +1,304 @@
 <template>
   <div class="form-builder">
-    <!-- Sidebar for selecting elements -->
-    <div class="sidebar">
-      <div
-        class="element"
-        v-for="(element, index) in formElements"
-        :key="index"
-        @click="addElementToForm(element)"
-      >
+    <div class="elements-sidebar">
+      <div v-for="(element, index) in formElements" :key="index" @click="addElementToForm(element)" class="sidebar-item">
         <i :class="element.icon"></i>
         <span>{{ element.label }}</span>
       </div>
     </div>
 
-    <!-- Main form container -->
     <div class="form-container">
-      <!-- Form header for title and description -->
       <div class="form-header">
-        <div class="form-title">
-          <label for="form-title">Titre du formulaire :</label>
-          <input
-            id="form-title"
-            type="text"
-            v-model="formTitle"
-            placeholder="Entrez le titre du formulaire"
-          />
-        </div>
-        <div class="form-description">
-          <label for="form-description">Description du formulaire :</label>
-          <textarea
-            id="form-description"
-            v-model="formDescription"
-            placeholder="Entrez la description du formulaire"
-          ></textarea>
-        </div>
+        <input class="form-title" type="text" v-model="formTitle" placeholder="Formulaire sans titre" />
+        <textarea class="form-description" v-model="formDescription" placeholder="Description du formulaire"></textarea>
       </div>
 
-      <!-- Form area for adding elements and previewing -->
-      <div class="form-area" v-if="!previewMode">
-        <h2>Création du formulaire</h2>
-        <div class="drop-area">
-          <!-- Form fields dynamically generated -->
-          <form>
-            <div
-              v-for="(field, index) in formFields"
-              :key="index"
-              :class="getFieldClass(field.type)"
-            >
-              <input
-                type="text"
-                v-model="field.question"
-                placeholder="Entrez la question"
-              />
-              <div v-if="field.type === 'text-input'">
-                <label :for="'field-' + index">{{ field.label }}</label>
-                <input
-                  type="text"
-                  v-bind="field.props"
-                  :id="'field-' + index"
-                />
-              </div>
-              <div v-if="field.type === 'paragraph-input'">
-                <label :for="'field-' + index">{{ field.label }}</label>
-                <textarea
-                  v-bind="field.props"
-                  :id="'field-' + index"
-                ></textarea>
-              </div>
-              <div v-if="field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown'">
-                <label class="options-label">Options:</label>
-                <div
-                  v-for="(option, optIndex) in field.props.options"
-                  :key="optIndex"
-                  class="option-item"
-                >
-                  <div class="option-input-container">
-                    <input
-                      type="text"
-                      v-model="field.props.options[optIndex]"
-                      placeholder="Option"
-                      class="option-input"
-                    />
-                    <button
-                      @click.prevent="removeOption(field, optIndex)"
-                      class="option-button"
-                    >
-                      <i class="fas fa-trash-alt"></i> Supprimer
-                    </button>
-                  </div>
-                </div>
-                <button @click.prevent="addOption(field)" class="add-option-button">
-                  <i class="fas fa-plus"></i> Ajouter une option
-                </button>
-              </div>
-              <button class="action-button" @click.prevent="editElement(index)">
-                <i class="fas fa-edit"></i> Éditer
-              </button>
-              <button class="action-button" @click.prevent="duplicateElement(index)">
-                <i class="fas fa-copy"></i> Dupliquer
-              </button>
-              <button class="action-button" @click.prevent="deleteElement(index)">
-                <i class="fas fa-trash-alt"></i> Supprimer
-              </button>
+      <div class="form-body">
+        <div v-for="(field, index) in formFields" :key="index" class="form-field">
+          <input type="text" v-model="field.question" placeholder="Question sans titre" class="field-question" />
+          
+          <select v-model="field.type" class="field-type-select">
+            <option value="text">Réponse courte</option>
+            <option value="textarea">Paragraphe</option>
+            <option value="radio">Choix multiples</option>
+            <!-- Ajoutez d'autres types de champs si nécessaire -->
+          </select>
+
+          <div v-if="field.type === 'text'">
+            <input type="text" placeholder="Réponse courte" class="field-input" />
+          </div>
+          <div v-else-if="field.type === 'textarea'">
+            <textarea placeholder="Paragraphe" class="field-input"></textarea>
+          </div>
+          <div v-else-if="field.type === 'radio'">
+            <div v-for="(option, optIndex) in field.options" :key="optIndex" class="field-option">
+              <input type="radio" :name="'option-' + index" :id="'option-' + index + '-' + optIndex" />
+              <label :for="'option-' + index + '-' + optIndex">{{ option }}</label>
             </div>
-          </form>
+            <button @click.prevent="addOption(field)" class="add-option-btn">Ajouter une option</button>
+          </div>
+          <!-- Ajoutez d'autres types de champs si nécessaire -->
         </div>
-        <div class="fo-butt">
-          <button class="form-button" @click="togglePreviewMode">
-            <i class="fas fa-eye"></i> Prévisualiser
-          </button>
-          <button class="form-button" @click="saveForm">
-            <i class="fas fa-save"></i> Enregistrer le formulaire
-          </button>
-        </div>
+        
+        <button @click="addQuestion" class="add-question-btn"><i class="fas fa-plus"></i> </button>
       </div>
 
-      <!-- Preview mode -->
-      <div class="preview-container" v-else>
-        <form-preview :formFields="formFields"></form-preview>
-        <button class="form-button" @click="togglePreviewMode">Revenir à l'édition</button>
+      <div class="form-actions">
+        <button class="action-btn preview-btn" @click="togglePreviewMode">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="action-btn save-btn" @click="saveForm">
+          <i class="fas fa-save"></i>
+        </button>
       </div>
-
-      <!-- Element editor modal -->
-      <div class="element-editor" v-if="selectedElement !== null">
-        <h2>Édition de l'élément</h2>
-        <!-- Include an editor for the selected element here -->
-        <button class="form-button" @click="closeElementEditor">Fermer</button>
-      </div>
-
-      
     </div>
   </div>
 </template>
 
+
 <script>
-import FormPreview from './FormPreview.vue';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
-
-
 export default {
-  name: 'FormBuilder',
-
-  components: {
-    FormPreview
-  },
-
   data() {
     return {
       formTitle: '',
       formDescription: '',
-      previewMode: false,
-      selectedElement: null,
+      formFields: [],
       formElements: [
-        { type: 'text-input', label: 'Réponse courte', icon: 'fas fa-font' },
-        { type: 'paragraph-input', label: 'Paragraphe', icon: 'fas fa-align-left' },
-        { type: 'checkbox-group', label: 'Cases à cocher', icon: 'fas fa-check-square' },
-        { type: 'radio-group', label: 'Boutons radio', icon: 'fas fa-dot-circle' },
-        { type: 'dropdown', label: 'Menu déroulant', icon: 'fas fa-caret-down' },
-        { type: 'date-picker', label: 'Date', icon: 'fas fa-calendar-alt' },
-        { type: 'time-picker', label: 'Heure', icon: 'fas fa-clock' },
-        { type: 'file-upload', label: 'Téléchargement de fichier', icon: 'fas fa-upload' }
+        { label: 'Réponse courte', icon: 'fas fa-font', type: 'text' },
+        { label: 'Paragraphe', icon: 'fas fa-align-left', type: 'textarea' },
+        { label: 'Choix multiples', icon: 'fas fa-dot-circle', type: 'radio' },
+        // Ajoutez d'autres éléments si nécessaire
       ],
-
-      formFields: [], // Array to store form fields
-      savedForms: [] // Array to store saved forms
+      previewMode: false,
     };
   },
-
   methods: {
-    // Handle click event to add element to form
-    addElementToForm(element) {
-      const newElement = {
-        type: element.type,
-        label: element.label,
-        question: '', // Initialize question for the element
-        props: {
-          placeholder: `Entrez ${element.label.toLowerCase()}`
-        }
-      };
-      if (element.type === 'checkbox-group' || element.type === 'radio-group' || element.type === 'dropdown') {
-        newElement.props.options = ['']; // Initialize options array if needed
-      }
-      this.formFields.push(newElement);
+    addQuestion() {
+      this.formFields.push({
+        type: 'text',
+        question: '',
+        options: [], // Utilisé uniquement pour les types de champs 'radio'
+      });
     },
-
-    // Edit selected element
-    editElement(index) {
-      this.selectedElement = index;
-      // Implement editing functionality
-    },
-
-    // Duplicate selected element
-    duplicateElement(index) {
-      const elementToDuplicate = { ...this.formFields[index] };
-      this.formFields.splice(index + 1, 0, elementToDuplicate);
-    },
-
-    // Delete selected element
-    deleteElement(index) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-        this.formFields.splice(index, 1);
+    addOption(field) {
+      if (field.type === 'radio') {
+        field.options.push(`Option ${field.options.length + 1}`);
       }
     },
-
-    // Toggle preview mode
     togglePreviewMode() {
       this.previewMode = !this.previewMode;
     },
-
-    // Save form to Firestore
-    async saveForm() {
-      try {
-        // Récupérer les données du formulaire (ex. this.formData)
-        const formData = {
-          title: 'Mon formulaire',
-          questions: [/* vos questions */]
-        };
-
-        // Enregistrer dans Firestore
-        const docRef = await addDoc(collection(db, 'forms'), formData);
-        console.log('Document enregistré avec ID: ', docRef.id);
-
-        // Redirection vers la page d'accueil
-        this.$router.push({ name: 'Home' });
-      } catch (error) {
-        console.error('Erreur lors de l\'enregistrement du formulaire: ', error);
-      }
+    saveForm() {
+      // Ajoutez votre logique de sauvegarde du formulaire ici
+      console.log({
+        title: this.formTitle,
+        description: this.formDescription,
+        fields: this.formFields,
+      });
     },
-
-    // Load form from saved forms
-    loadForm(index) {
-      const form = this.savedForms[index];
-      this.formTitle = form.title;
-      this.formDescription = form.description;
-      this.formFields = form.fields;
-    },
-
-    // Delete form from saved forms
-    deleteForm(index) {
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce formulaire ?')) {
-        this.savedForms.splice(index, 1);
-      }
-    },
-
-    // Add an option to a group element (checkbox-group, radio-group, dropdown)
-    addOption(field) {
-      if (field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown') {
-        field.props.options.push('');
-      }
-    },
-
-    // Remove an option from a group element
-    removeOption(field, index) {
-      if (field.type === 'checkbox-group' || field.type === 'radio-group' || field.type === 'dropdown') {
-        field.props.options.splice(index, 1);
-      }
-    },
-
-    // Get CSS class based on field type
-    getFieldClass(type) {
-      return `form-field ${type}`;
-    },
-
-    // Close element editor modal
-    closeElementEditor() {
-      this.selectedElement = null;
-      // Implement closing logic
+    addElementToForm(element) {
+      const newField = {
+        type: element.type,
+        question: '',
+        options: element.type === 'radio' ? ['Option 1'] : [],
+      };
+      this.formFields.push(newField);
     }
-  }
+  },
 };
 </script>
 
-<style scoped>
+
+<style>
 .form-builder {
   display: flex;
-}
-
-.sidebar {
-  width: 240px; /* Légèrement augmenté pour plus d'espace */
-  background-color: #f0f0f0;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ajusté à la hauteur de la vue */
   padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre légère */
+  background-color: #f5f7fa;
 }
 
-.sidebar .element {
-  background-color: #fff;
-  padding: 10px;
-  margin-bottom: 10px;
+.elements-sidebar {
+  width: 80px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  left: 20px;
+  top: 20px;
+}
+
+.sidebar-item {
+  margin-bottom: 20px;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Légère ombre sous chaque élément */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s, background-color 0.3s;
+  padding: 10px;
+  border-radius: 8px;
+  width: 60px;
+  text-align: center;
+  background-color: #f9f9f9;
 }
 
-.sidebar .element:hover {
-  background-color :#007bff ; /* Légère modification de couleur au survol */
+.sidebar-item:hover {
+  transform: scale(1.05);
+  background-color: #e0e0e0;
 }
 
-.sidebar .element:last-child {
-  margin-bottom: 0; /* Supprime le margin-bottom du dernier élément */
-}
-.form-header {
-  margin-bottom: 30px; /* Augmentation de l'espacement en bas pour plus d'aération */
-  border-bottom: 1px solid #ccc; /* Ajout d'une ligne de séparation en bas */
-  padding-bottom: 15px; /* Espacement en bas pour la séparation */
-}
-
-.form-title {
-  flex: 1; /* Pour occuper tout l'espace disponible */
-}
-
-.form-title label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px; /* Espacement entre le label et le champ */
-  color: #2e86c1; /* Bleu légèrement plus foncé */
-  font-size: 1.2em; /* Taille de police légèrement augmentée */
-  transition: color 0.3s ease; /* Transition de couleur douce */
-}
-
-.form-title input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #b8c9dc; /* Bordure légèrement plus claire */
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 1em;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition douce */
-}
-
-.form-title input[type="text"]:focus {
-  border-color: #3071a9; /* Bleu plus foncé au focus */
-  box-shadow: 0 0 8px rgba(48, 113, 169, 0.4); /* Légère ombre au focus */
-}
-
-/* Style pour la description du formulaire */
-.form-description {
-  flex: 2; /* Pour occuper un espace plus grand */
-}
-
-.form-description label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px; /* Espacement entre le label et le champ */
-  color: #2e86c1; /* Bleu légèrement plus foncé */
-  font-size: 1.2em; /* Taille de police légèrement augmentée */
-  transition: color 0.3s ease; /* Transition de couleur douce */
-}
-
-.form-description textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #b8c9dc; /* Bordure légèrement plus claire */
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 1em;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition douce */
-}
-
-.form-description textarea:focus {
-  border-color: #3071a9; /* Bleu plus foncé au focus */
-  box-shadow: 0 0 8px rgba(48, 113, 169, 0.4); /* Légère ombre au focus */
-}
-h2{
-  color: #3071a9;
+.sidebar-item i {
+  font-size: 1.5em;
+  color: #007bff;
 }
 
 .form-container {
-  flex: 1;
-  padding: 20px;
-  background-color: #f0f5f9; /* Couleur de fond */
+  margin-left: 100px;
+  width: calc(100% - 120px);
+  max-width: 800px; /* Limiter la largeur du conteneur du formulaire */
+  background-color: #ffffff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre plus prononcée */
-  transition: box-shadow 0.3s ease; /* Transition pour une légère animation */
-}
-
-.form-container:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Légère augmentation de l'ombre au survol */
-}
-
-
-.form-area {
   padding: 20px;
-  border: 2px solid #1a5276; /* Bordure plus prononcée et bleu sombre */
-  border-radius: 8px;
-  background-color: #f0f5f9; /* Fond légèrement teinté */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre pour la profondeur */
-  transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Transition pour une animation douce */
+  overflow-y: auto; /* Permet de faire défiler si le formulaire est trop long */
+  max-height: 100vh; /* Limiter la hauteur maximale du conteneur du formulaire */
 }
 
-.form-area:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre légèrement plus prononcée au survol */
-  border-color: #2e86c1; /* Couleur de bordure plus claire au survol */
+.form-header {
+  margin-bottom: 30px;
 }
 
-
-/* Style pour les champs de formulaire */
-.form-input {
+.form-title, .form-description {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #b8c9dc;
-  border-radius: 4px;
-  font-size: 1em;
-}
-
-
-/* Style de base pour les boutons previsualiser et enrigistrer*/
-.fo-butt {
-  display: flex;
-  gap: 10px; /* Espacement entre les boutons */
-  justify-content: center; /* Centrer les boutons horizontalement */
-  margin-top: 20px; /* Marge supérieure */
-}
-
-/* Style de base pour les boutons */
-.form-button {
-  padding: 12px 24px; /* Padding pour une taille confortable */
-  background-color: #007bff; /* Bleu vif */
-  color: #ffffff; /* Texte blanc */
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  padding: 15px;
+  font-size: 1.2em;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Style au survol */
-.form-button:hover {
-  background-color: #0056b3; /* Bleu légèrement plus foncé au survol */
-  transform: translateY(-2px); /* Légère élévation au survol */
-}
-.action-button {
-    margin-top: 20px;
-    background-color: transparent;
-    border: none;
-    color: #007bff; /* Couleur de texte bleue */
-    cursor: pointer;
-    font-size: 1em;
-    transition: color 0.3s ease;
-    margin-right: 10px; /* Marge entre les boutons */
-  }
-
-  .action-button:hover {
-    color: #0056b3; /* Couleur de texte bleue plus foncée au survol */
-  }
-
-  .action-button i {
-    margin-right: 5px; /* Espace entre l'icône et le texte */
-  }
-
-
-
-.label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input[type="text"],
-textarea,
-select,
-input[type="date"],
-input[type="time"],
-input[type="file"] {
+.field-type-select {
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #e0e0e0;
   border-radius: 4px;
-  box-sizing: border-box;
-}
-.options-container { 
-    margin-top: 10px;
-  }
-
-.options-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #1a5276; /* Bleu sombre */
-  }
-
-.option-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-.option-input-container {
-    display: flex;
-    align-items: center;
-  }
-
-  .option-input {
-    flex: 1;
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #b8c9dc; /* Bordure légèrement plus claire */
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 1em;
-  }
-
-  .option-button {
-    margin-bottom: 20px;
-    padding: 8px;
-    background-color: #dc3545; /* Rouge */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-  }
-
-  .option-button i {
-    margin-right: 5px;
-  }
-
-  .option-button:hover {
-    background-color: #c82333; /* Rouge légèrement plus foncé au survol */
-  }
-
-  .add-option-button {
-    margin-top: 20px;
-    padding: 8px 12px;
-    background-color: #007bff; /* Bleu */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-  }
-
-  .add-option-button i {
-    margin-right: 5px;
-  }
-
-  .add-option-button:hover {
-    background-color: #0056b3; /* Bleu légèrement plus foncé au survol */
-  }
-
-/* Additional styles for form preview */
-.form-preview {
-  padding: 20px;
-  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  font-size: 1em;
 }
 
-/* Styles for form fields based on type */
-.form-field-text-input {
-  margin-bottom: 10px;
-}
-
-.form-field-paragraph-input {
-  margin-bottom: 10px;
-}
-
-.form-field-checkbox-group {
-  margin-bottom: 10px;
-}
-
-.form-field-radio-group {
-  margin-bottom: 10px;
-}
-
-.form-field-dropdown {
-  margin-bottom: 10px;
-}
-
-.form-field-date-picker {
-  margin-bottom: 10px;
-}
-
-.form-field-time-picker {
-  margin-bottom: 10px;
-}
-
-.form-field-file-upload {
-  margin-bottom: 10px;
-}
-
-/* Styles for form management */
-.form-management {
+.form-body {
   margin-top: 20px;
 }
 
-.form-list {
-  list-style-type: none;
-  padding: 0;
+.form-field {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fafafa;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ajouter une ombre pour un effet de profondeur */
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.form-list li {
-  margin-bottom: 20px;
+.form-field:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au survol */
 }
 
-.form-list h3 {
+.field-question {
+  width: 100%;
+  border: none;
+  padding: 10px;
+  font-size: 1.1em;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.field-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.field-option {
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
 }
 
+.add-option-btn {
+  background: #007bff;
+  border: none;
+  color: #ffffff;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9em;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.add-option-btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.add-question-btn {
+  background: #28a745;
+  border: none;
+  color: #ffffff;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 6px;
+  margin-top: 20px;
+  display: block;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.add-question-btn:hover {
+  background: #218838;
+  transform: scale(1.05);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.action-btn {
+  background-color: #007bff;
+  border: none;
+  color: #ffffff;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 6px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.action-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.preview-btn i, .save-btn i {
+  margin-right: 8px;
+}
 </style>

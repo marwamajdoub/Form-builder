@@ -30,6 +30,7 @@
         <p @click="toggleMode">
           {{ isLogin ? "Pas de compte ? Créer un compte" : "Déjà un compte ? Se connecter" }}
         </p>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
     </div>
   </div>
@@ -45,12 +46,14 @@ export default {
     return {
       isLogin: true,
       email: '',
-      password: ''
+      password: '',
+      errorMessage: ''
     };
   },
   methods: {
     toggleMode() {
       this.isLogin = !this.isLogin;
+      this.errorMessage = ''; // Clear error message when toggling mode
     },
     async handleSubmit() {
       try {
@@ -71,8 +74,10 @@ export default {
           this.$router.push('/home');
         }
       } catch (error) {
+        this.errorMessage = this.isLogin
+          ? 'Erreur de connexion : ' + error.message
+          : 'Erreur de création du compte : ' + error.message;
         console.error('Error:', error);
-        alert(this.isLogin ? 'Identifiants incorrects' : 'Erreur de création du compte');
       }
     }
   }
