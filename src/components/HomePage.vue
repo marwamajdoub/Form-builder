@@ -3,8 +3,8 @@
     <Sidebar :isAdmin="isAdmin" @navigate="handleNavigation" />
     <div class="content">
       <div class="view-mode-buttons">
-        <button @click="toggleViewMode(true)" :class="{ active: isGridView }">Grille</button>
-        <button @click="toggleViewMode(false)" :class="{ active: !isGridView }">Liste</button>
+        <button @click="toggleViewMode(true)" :class="{ active: isGridView }"> <i class="fas fa-th icon"></i></button>
+        <button @click="toggleViewMode(false)" :class="{ active: !isGridView }"> <i class="fas fa-list icon"></i></button>
       </div>
 
       <!-- Formulaires -->

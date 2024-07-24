@@ -55,8 +55,14 @@
     </div>
 
     <!-- Add save button -->
-    <button @click="saveTemplate" class="save-button">Enregistrer</button>
+    <button @click="saveTemplate" class="save-button">Partager
+
+    </button>
   </div>
+  <div v-if="shareLink" class="share-link">
+      <p>Lien de partage :</p>
+      <a :href="shareLink" target="_blank">{{ shareLink }}</a>
+    </div>
   <div v-else>
     <p>Chargement du template...</p>
   </div>
@@ -77,6 +83,7 @@ export default {
   },
   setup(props) {
     const template = ref(null);
+    const shareLink = ref('');
 
     onMounted(async () => {
       const templateId = props.id;
@@ -142,7 +149,11 @@ export default {
         };
         const formRef = doc(collection(db, 'forms'));
         await setDoc(formRef, newForm);
-        alert('Template enregistré avec succès !');
+
+        // Générer un lien de partage
+        shareLink.value = `${window.location.origin}/forms/${formRef.id}`;
+        
+        alert(`Template enregistré avec succès !\n\nVous pouvez le partager avec ce lien :\n${shareLink.value}`);
       } catch (error) {
         console.error('Erreur lors de l\'enregistrement du template :', error);
         alert('Erreur lors de l\'enregistrement du template.');
@@ -154,11 +165,13 @@ export default {
       getResponseType,
       startEditing,
       saveEditing,
-      saveTemplate
+      saveTemplate,
+      shareLink
     };
   }
 };
 </script>
+
 
 <style scoped>
 /* Styles spécifiques pour TemplatePreview */
@@ -293,5 +306,6 @@ export default {
 
 .save-button:hover {
   background-color: #0056b3;
+
 }
 </style>
