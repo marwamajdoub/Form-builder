@@ -70,6 +70,9 @@
           <button class="action-btn save-btn" @click="saveForm">
             <i class="fas fa-save"></i> 
           </button>
+          <button class="action-btn share-btn" @click="generateShareLink">
+            <i class="fas fa-share-alt"></i> 
+          </button>
         </div>
       </div>
 
@@ -112,6 +115,14 @@
               <input type="date" />
             </div>
           </div>
+
+          <!-- Bouton de partage -->
+          <div class="form-share">
+            <button @click="generateShareLink" class="share-btn">
+              <i class="fas fa-share-alt"></i> Partager
+            </button>
+            <input v-if="shareLink" type="text" :value="shareLink" readonly class="share-link" />
+          </div>
         </div>
 
         <div class="form-actions">
@@ -130,11 +141,16 @@ import { collection, addDoc } from 'firebase/firestore';
 
 export default {
   data() {
+
     return {
+      
+    
+      
+   
       formTitle: '',
       formDescription: '',
       formFields: [],
-      isPreviewMode: false, // Ajoutez une propriété pour le mode prévisualisation
+      isPreviewMode: false,
       formElements: [
         { label: 'Texte', icon: 'fas fa-font', type: 'text' },
         { label: 'Paragraphe', icon: 'fas fa-align-left', type: 'textarea' },
@@ -142,7 +158,8 @@ export default {
         { label: 'Cases à cocher', icon: 'fas fa-check-square', type: 'checkbox' },
         { label: 'Liste déroulante', icon: 'fas fa-caret-down', type: 'dropdown' },
         { label: 'Date', icon: 'fas fa-calendar-alt', type: 'date' }
-      ]
+      ],
+      shareLink: ''
     };
   },
   methods: {
@@ -164,24 +181,29 @@ export default {
       field.options.push('Nouvelle option');
     },
     togglePreviewMode() {
-      this.isPreviewMode = !this.isPreviewMode; // Bascule entre les modes
+      this.isPreviewMode = !this.isPreviewMode;
     },
     async saveForm() {
-      const formData = {
-        title: this.formTitle,
-        description: this.formDescription,
-        fields: this.formFields,
-      };
-      try {
-        await addDoc(collection(db, 'forms'), formData);
-        this.$router.push('/home'); // Redirige vers la page d'accueil après l'enregistrement
-      } catch (e) {
-        console.error('Error adding document: ', e);
-      }
-    },
-  },
-  
-};
+  const formData = {
+    title: this.formTitle,
+    description: this.formDescription,
+    fields: this.formFields
+  };
+
+  try {
+    const docRef = await addDoc(collection(db, 'forms'), formData);
+    console.log('Document written with ID: ', docRef.id);
+    alert('Formulaire enregistré avec succès!');
+    this.generateShareLink(docRef.id); // Génère le lien de partage après l'enregistrement
+  } catch (e) {
+    console.error('Error adding document: ', e);
+  }
+},
+generateShareLink(formId) {
+  this.shareLink = `${window.location.origin}/form/${formId}`;
+}
+}}
+
 </script>
 
 
@@ -441,6 +463,36 @@ export default {
   border-color: #007bff;
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
   outline: none;
+}
+.action-btn {
+  background-color: #007bff;
+  border: none;
+  color: #ffffff;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 6px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.action-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.share-btn {
+  background-color: #17a2b8; /* Couleur pour le bouton de partage */
+}
+
+.share-btn:hover {
+  background-color: #138496; /* Couleur au survol pour le bouton de partage */
+}
+
+.preview-btn i, .save-btn i, .share-btn i {
+  margin-right: 8px;
 }
 
 </style>

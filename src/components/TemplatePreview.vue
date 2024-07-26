@@ -54,15 +54,17 @@
       </template>
     </div>
 
-    <!-- Add save button -->
-    <button @click="saveTemplate" class="save-button">Partager
-
-    </button>
+    <!-- Add share button -->
+    <button @click="generateShareLink" class="share-button">Partager</button>
   </div>
+
+  <!-- Display share link if available -->
   <div v-if="shareLink" class="share-link">
-      <p>Lien de partage :</p>
-      <a :href="shareLink" target="_blank">{{ shareLink }}</a>
-    </div>
+    <p>Lien de partage :</p>
+    <a :href="shareLink" target="_blank">{{ shareLink }}</a>
+  </div>
+
+  <!-- Display loading message -->
   <div v-else>
     <p>Chargement du template...</p>
   </div>
@@ -70,7 +72,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 export default {
@@ -141,23 +143,12 @@ export default {
       // Ici, vous pouvez ajouter du code pour sauvegarder la modification dans Firebase
     };
 
-    const saveTemplate = async () => {
-      try {
-        const newForm = {
-          ...template.value,
-          createdAt: new Date()
-        };
-        const formRef = doc(collection(db, 'forms'));
-        await setDoc(formRef, newForm);
-
-        // Générer un lien de partage
-        shareLink.value = `${window.location.origin}/forms/${formRef.id}`;
-        
-        alert(`Template enregistré avec succès !\n\nVous pouvez le partager avec ce lien :\n${shareLink.value}`);
-      } catch (error) {
-        console.error('Erreur lors de l\'enregistrement du template :', error);
-        alert('Erreur lors de l\'enregistrement du template.');
-      }
+    const generateShareLink = () => {
+      // Générer un lien de partage sans enregistrer le formulaire
+      // Ici, on suppose que le lien de partage est basé sur l'ID du template
+      shareLink.value = `${window.location.origin}/form/${props.id}/response`;
+      
+      alert(`Lien de partage généré avec succès !\n\nVous pouvez le partager avec ce lien :\n${shareLink.value}`);
     };
 
     return {
@@ -165,12 +156,14 @@ export default {
       getResponseType,
       startEditing,
       saveEditing,
-      saveTemplate,
+      generateShareLink,
       shareLink
     };
   }
 };
 </script>
+
+
 
 
 <style scoped>
@@ -308,4 +301,37 @@ export default {
   background-color: #0056b3;
 
 }
+.share-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.share-button:hover {
+  background-color: #0056b3;
+}
+
+.share-link {
+  margin-top: 20px;
+  font-size: 1.1em;
+  text-align: center;
+}
+
+.share-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.share-link a:hover {
+  text-decoration: underline;
+}
+
 </style>

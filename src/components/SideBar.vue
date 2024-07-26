@@ -1,14 +1,14 @@
 <template>
   <aside class="sidebar">
     <div class="sidebar-header">
-  
+      <!-- Optional: Add a title or logo here -->
     </div>
     <ul class="sidebar-menu">
       <li @click="goToFormBuilder" class="sidebar-item">
         <i class="fas fa-plus icon"></i> Nouveau
       </li>
       <li @click="viewAllForms" class="sidebar-item">
-        <i class="fas fa-list icon"></i>Formulaires
+        <i class="fas fa-list icon"></i> Formulaires
       </li>
       <li @click="viewTemplates" class="sidebar-item">
         <i class="fas fa-file-alt icon"></i> Templates
@@ -16,21 +16,16 @@
       <li @click="viewResponses" class="sidebar-item">
         <i class="fas fa-chart-bar icon"></i> Responses
       </li>
-      <li @click="shareForm" class="sidebar-item">
-        <i class="fas fa-share-alt icon"></i> Share Form
-      </li>
+      
     </ul>
   </aside>
 </template>
 
 <script>
-import { ref } from 'vue';
-
-
 export default {
   methods: {
     goToFormBuilder() {
-      this.$emit('navigate', { name: 'FormBuilder' });
+      this.$router.push({ name: 'FormBuilder' }); // Utilisez $router.push pour la navigation
     },
     viewAllForms() {
       this.$emit('navigate', 'AllForms');
@@ -41,17 +36,7 @@ export default {
     viewResponses() {
       this.$emit('navigate', 'Responses');
     },
-    shareForm() {
-      const formId = this.currentFormId; // Assurez-vous que currentFormId est défini et mis à jour ailleurs dans le composant
-      if (!formId) {
-        alert('Please select a form to share.');
-        return;
-      }
-
-      const formUrl = `${window.location.origin}/forms/${formId}`;
-      this.copyToClipboard(formUrl);
-      alert(`Form URL copied to clipboard: ${formUrl}`);
-    },
+   
     copyToClipboard(text) {
       const textArea = document.createElement('textarea');
       textArea.value = text;
@@ -61,15 +46,15 @@ export default {
       document.body.removeChild(textArea);
     }
   },
-  setup() {
-    const currentFormId = ref('UC6WL3ld7IBpm2VVWqaZ'); // Remplacer par une logique pour obtenir l'ID du formulaire actuel
-    return { currentFormId };
-  
-
-    
+  props: {
+    currentFormId: {
+      type: String,
+      default: ''
+    }
   }
 }
 </script>
+
 
 <style scoped>
 .sidebar {

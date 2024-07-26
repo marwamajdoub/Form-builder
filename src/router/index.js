@@ -5,52 +5,60 @@ import FormBuilder from '../components/FormBuilder.vue';
 import TemplatePreview from '../components/TemplatePreview.vue';
 import LoginPage from '../components/LoginPage.vue';
 import AdminPage from '../components/AdminPage.vue';
+import FormResponse from '@/components/FormResponse.vue';
 
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/login',
   },
   {
     path: '/login',
     name: 'Login',
-    component: LoginPage
+    component: LoginPage,
   },
   {
     path: '/home',
     name: 'Home',
     component: HomePage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/form-preview/:id',
     name: 'FormPreview',
     component: FormPreview,
-    props: true
+    props: true,
   },
   {
     path: '/form-builder',
     name: 'FormBuilder',
     component: FormBuilder,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/template/:id',
     name: 'TemplatePreview',
     component: TemplatePreview,
-    props: true
+    props: true,
   },
   {
     path: '/admin',
     name: 'Admin',
     component: AdminPage,
-    meta: { requiresAuth: true, requiresAdmin: true }
-  }
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/form/:id',
+    name: 'FormResponse',
+    component: FormResponse,
+    props: true,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 });
+
 
 export default router;
