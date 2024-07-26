@@ -2,10 +2,7 @@
   <div id="app">
     <header v-if="!isLoginPage">
       <h1><i class="fas fa-file-alt"></i> FORM BUILDER</h1>
-      <nav>
-        <router-link to="/form-builder">Créer</router-link>
-        <router-link to="/home">Home</router-link>
-      </nav>
+      
     </header>
     <main :class="{ 'centered-content': isLoginPage }">
       <router-view></router-view>
