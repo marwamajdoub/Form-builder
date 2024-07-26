@@ -6,6 +6,7 @@ import TemplatePreview from '../components/TemplatePreview.vue';
 import LoginPage from '../components/LoginPage.vue';
 import AdminPage from '../components/AdminPage.vue';
 import FormResponse from '@/components/FormResponse.vue';
+import ResponseSub from '@/components/ResponseSub.vue'; // Import du composant ReponseSub
 
 const routes = [
   {
@@ -53,12 +54,17 @@ const routes = [
     component: FormResponse,
     props: true,
   },
+  {
+    path: '/responses',
+    name: 'ResponseSub',
+    component: ResponseSub,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
 
 export default router;

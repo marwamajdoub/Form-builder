@@ -34,7 +34,7 @@ export default {
       this.$emit('navigate', 'Templates');
     },
     viewResponses() {
-      this.$emit('navigate', 'Responses');
+      this.$router.push({ name: 'ResponseSub' });
     },
    
     copyToClipboard(text) {
