@@ -65,3 +65,122 @@ export default {
   }
 };
 </script>
+<style scoped>
+.form-preview {
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: auto;
+  font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+  font-size: 2.5em;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 1.2em;
+  color: #555;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-preview-field {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 1.1em;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+input[type="text"],
+textarea,
+select,
+input[type="date"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 1em;
+  background: #f9f9f9;
+}
+
+input[type="text"]:disabled,
+textarea:disabled,
+select:disabled,
+input[type="date"]:disabled {
+  background: #e9ecef;
+  color: #888;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.field-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.field-option label {
+  font-size: 1em;
+  color: #333;
+}
+
+select {
+  background: #ffffff;
+}
+
+input[type="date"] {
+  cursor: not-allowed;
+}
+/* Styles pour le bouton de partage */
+.share-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.share-button:hover {
+  background-color: #0056b3;
+}
+
+/* Styles pour le lien de partage */
+.share-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 1em;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.share-link:hover {
+  color: #0056b3;
+}
+</style>

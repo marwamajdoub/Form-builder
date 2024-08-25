@@ -42,7 +42,6 @@
           <div class="form-item-actions">
             <i class="fas fa-copy" @click.stop="duplicateForm(form.id)"></i>
             <i class="fas fa-trash" @click.stop="deleteForm(form.id)"></i>
-            <i class="fas fa-share" @click.stop="shareForm(form.id)"></i>
           </div>
         </li>
       </ul>
@@ -59,7 +58,6 @@
             <div class="form-card-actions">
               <i class="fas fa-copy" @click.stop="duplicateTemplate(template.id)"></i>
               <i class="fas fa-trash" @click.stop="deleteTemplate(template.id)"></i>
-              <i class="fas fa-share" @click.stop="shareTemplate(template.id)"></i>
             </div>
           </div>
         </div>
@@ -70,7 +68,6 @@
           <div class="form-item-actions">
             <i class="fas fa-copy" @click.stop="duplicateTemplate(template.id)"></i>
             <i class="fas fa-trash" @click.stop="deleteTemplate(template.id)"></i>
-            <i class="fas fa-share" @click.stop="shareTemplate(template.id)"></i>
           </div>
         </li>
       </ul>
@@ -113,9 +110,7 @@ export default {
     previewTemplate(templateId) {
       this.$router.push({ name: 'TemplatePreview', params: { id: templateId } });
     },
-    shareForm(formId) {
-      console.log(`Share form ${formId}`);
-    },
+   
     duplicateForm(formId) {
       console.log(`Duplicate form ${formId}`);
     },

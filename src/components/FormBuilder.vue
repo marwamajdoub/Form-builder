@@ -485,10 +485,33 @@ generateShareLink(formId) {
 
 .share-btn {
   background-color: #17a2b8; /* Couleur pour le bouton de partage */
+  border: none;
+  color: #ffffff;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 6px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .share-btn:hover {
   background-color: #138496; /* Couleur au survol pour le bouton de partage */
+  transform: scale(1.05);
+}
+
+.share-link {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 1em;
+  color: #333;
+  margin-top: 10px;
 }
 
 .preview-btn i, .save-btn i, .share-btn i {

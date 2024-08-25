@@ -146,7 +146,6 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-content: center;
 }
 
 button:hover {
